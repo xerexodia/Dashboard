@@ -1,0 +1,98 @@
+.dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    span {
+        font-size: 26px;
+        color: rgb(70, 70, 70);
+    }
+    button {
+        border: 1px solid #1890ff;
+        background-color: #e6f7ff;
+        padding: 10px 12px;
+        border-radius: 5px;
+        color: #1890ff;
+        cursor: pointer;
+        font-weight: '600';
+    }
+}
+.users-grid-data {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+
+    & > :first-child {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: rgb(221, 221, 221);
+        padding: 5px 10px;
+        border-radius: 5px 5px 0 0;
+        & > :nth-child(n) {
+            flex: 1;
+        }
+    }
+}
+
+.users-grid-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    & > :nth-child(n) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 25px 10px;
+        background-color: #fff;
+        & > :nth-child(n) {
+            flex: 1;
+        }
+        &:hover {
+            background-color: rgb(238, 238, 238);
+            cursor: pointer;
+        }
+    }
+}
+
+.grid-data {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+
+    & > :first-child {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: rgb(221, 221, 221);
+        padding: 5px 10px;
+        border-radius: 5px 5px 0 0;
+        & > :nth-child(n) {
+            flex: 1;
+        }
+        & > :last-child {
+            flex: 0.3;
+        }
+    }
+}
+.grid-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    & > :nth-child(n) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 25px 10px;
+        background-color: #fff;
+        & > :nth-child(n) {
+            flex: 1;
+        }
+        & > :last-child {
+            flex: 0.3;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}

@@ -1,0 +1,40 @@
+.machine-detail-box {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 40%;
+    background-color: #fff;
+    box-shadow: 1px 1px 5px rgba($color: #e0e0e0, $alpha: 1);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 50px;
+    & > :first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    & > :last-child {
+        align-self: flex-end;
+        display: flex;
+        gap: 20px;
+        & > :nth-child(2) {
+            border: 1px solid #d13e3e;
+            background-color: #ecb1b1;
+            padding: 10px 12px;
+            border-radius: 5px;
+            color: #d13e3e;
+            cursor: pointer;
+            font-weight: '600';
+        }
+        & > :nth-child(1) {
+            border: 1px solid grey;
+            background-color: #e8e8e8;
+            padding: 10px 12px;
+            border-radius: 5px;
+            color: grey;
+            cursor: pointer;
+            font-weight: '600';
+        }
+    }
+}

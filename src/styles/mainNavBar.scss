@@ -1,0 +1,43 @@
+.navBarContainer {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 1px 1px 15px rgba($color: #a3a2a2, $alpha: 0.2);
+    padding: 20px;
+    & > :first-child {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: space-between;
+
+        & > :nth-child(1) {
+            font-weight: 500;
+            font-size: 36px;
+            color: grey;
+        }
+        & > :nth-child(3) {
+            padding: 10px 20px;
+            background-color: #1890ff;
+            color: white;
+            font-weight: 600;
+            border-radius: 5px;
+            &:hover {
+                background-color: #0083fd;
+            }
+        }
+        & > :nth-child(2) {
+            display: flex;
+            gap: 23px;
+
+            & > :nth-child(n) {
+                font-weight: 500;
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+    a {
+        text-decoration: none;
+    }
+}
