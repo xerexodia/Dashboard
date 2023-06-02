@@ -15,6 +15,7 @@ import 'assets/third-party/apex-chart.css';
 import App from './App';
 import { store } from 'store';
 import reportWebVitals from './reportWebVitals';
+import 'react-toastify/dist/ReactToastify.css';
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
