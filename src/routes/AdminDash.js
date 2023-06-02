@@ -26,7 +26,7 @@ const AdminDash = {
             children: [
                 { path: '', element: <Users /> },
                 {
-                    path: ':id',
+                    path: ':userId',
                     element: <Outlet />,
                     children: [
                         {
@@ -34,7 +34,7 @@ const AdminDash = {
                             element: <UserDetails />
                         },
                         {
-                            path: 'machine/:id',
+                            path: 'machine/:machineId',
                             element: <Outlet />,
                             children: [
                                 {
