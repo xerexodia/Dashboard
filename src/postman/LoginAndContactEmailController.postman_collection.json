@@ -1,0 +1,77 @@
+{
+	"info": {
+		"_postman_id": "8639090c-d45a-4164-86f9-a332199a9a39",
+		"name": "LoginAndContactEmailController",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21385436",
+		"_collection_link": "https://dark-capsule-424534.postman.co/workspace/New-Team-Workspace~e48bc1dc-3ec3-4ee4-87ec-70a9baa70b94/collection/21385436-8639090c-d45a-4164-86f9-a332199a9a39?action=share&creator=21385436&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "ContactController",
+			"item": [
+				{
+					"name": "SendEmail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"string\",\r\n  \"phone\": 43432423,\r\n  \"email\": \"string323@gmail.com\",\r\n  \"message\": \"dqdqsdqsdsqdq\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/ContactEmail/SendEmail",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"ContactEmail",
+								"SendEmail"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LoginController",
+			"item": [
+				{
+					"name": "UserLogin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"emailAddress\": \"user@example.com\",\r\n  \"password\": \"stringst\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/UserLogin/Login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"UserLogin",
+								"Login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

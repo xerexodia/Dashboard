@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'styles/userDetails.scss';
 import 'styles/headerDash.scss';
 import 'styles/machineDetails.scss';
@@ -23,15 +23,84 @@ import {
 import AnimateButton from 'components/@extended/AnimateButton';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-
+import axios from 'axios';
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
+import { url } from 'constants/urls';
 
 // =========
 const MachineDetails = () => {
     const [informerModal, setInformerModal] = React.useState(false);
     const [addVisitModal, setAddVisitModal] = React.useState(false);
+    const [machine, setMachine] = useState({});
+    const [visits, setVisits] = useState([]);
+    const [file, setFile] = useState();
+    const inputRef = useRef();
     const navigate = useNavigate();
+    console.log(file);
+    const { machineId } = useParams();
+    const [visit, setVisit] = useState({
+        VisitNumber: '',
+        VisitDate: '',
+        RepaireType: '',
+        FinalState: '',
+        PmInvestigationFileNumber: '',
+        PmReturnDate: '',
+        PmInterventionFileNumber: '',
+        Comment: '',
+        CmEnterDate: '',
+        CmInvestigationFileNumber: '',
+        CmRepaireType: '',
+        CmInterventionFileNumber: '',
+        CmReturnDate: ''
+    });
+    const getMachine = async () => {
+        return await axios.get(`${url}Machine/${machineId}/visits`);
+    };
+    const deleteMachine = async () => {
+        await axios.delete(`${url}Machine/${machineId}`);
+    };
+
+    const addVisit = async (values) => {
+        const formData = new FormData();
+        for (let el of Object.keys(values)) {
+            formData.append(el, values[el]);
+        }
+
+        const reader = new FileReader();
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+        reader.onload = (readerEvent) => {
+            formData.append('Attachement', readerEvent.target.result);
+            console.log(readerEvent.target.result);
+        };
+        formData.append('MachineSerialNumber', machine.serialNumber);
+        formData.append('MachineType', machine.machineType);
+        for (let el of formData) {
+            console.log(el);
+        }
+        const data = await axios.post(`${url}VisitDetails/AddVisit`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        console.log(data);
+        setVisits((prev) => [...prev, data.data]);
+    };
+
+    useEffect(() => {
+        getMachine()
+            .then((res) => {
+                setMachine(res.data);
+                setVisits(res.data?.visitDetails);
+            })
+            .catch((err) => console.log(err));
+        console.log(machine);
+
+        return () => {
+            setMachine({});
+            setVisits([]);
+        };
+    }, [machineId]);
 
     return (
         <div>
@@ -41,21 +110,28 @@ const MachineDetails = () => {
             <div className="machine-detail-box">
                 <div>
                     <span>
-                        Numéro de série: <span style={{ fontWeight: '500' }}>#qsdiuoyhsqdh421654</span>
+                        Numéro de série: <span style={{ fontWeight: '500' }}>#{machine.serialNumber}</span>
                     </span>
                     <span>
-                        id client: <span style={{ fontWeight: '500' }}>#542564dqs1</span>
+                        id client: <span style={{ fontWeight: '500' }}>#{machine.userId}</span>
                     </span>
                     <span>
-                        type: <span style={{ fontWeight: '500' }}>dqsdqsd</span>
+                        type: <span style={{ fontWeight: '500' }}>{machine.machineType}</span>
                     </span>
                     <span>
-                        date de vente:<span style={{ fontWeight: '500' }}>27/12/2023</span>
+                        date de vente:<span style={{ fontWeight: '500' }}>{machine.sellDate}</span>
                     </span>
                 </div>
                 <div>
                     <button onClick={() => setInformerModal(true)}>informer</button>
-                    <button>delete</button>
+                    <button
+                        onClick={() => {
+                            deleteMachine();
+                            navigate(-1);
+                        }}
+                    >
+                        delete
+                    </button>
                     <Modal title="notifier utilisateur" onClose={() => setInformerModal(false)} show={informerModal}>
                         <Formik
                             initialValues={{
@@ -163,27 +239,10 @@ const MachineDetails = () => {
             <div className="dash-header">
                 <span>liste visite</span>
                 <button onClick={() => setAddVisitModal(true)}>ajouter</button>
-                <Modal title="notifier utilisateur" onClose={() => setAddVisitModal(false)} show={addVisitModal}>
-                    <Formik
-                        initialValues={{
-                            visitNumber: '',
-                            visitDate: '',
-                            repairType: '',
-                            finalState: '',
-                            pminvestFileNum: '',
-                            pmReturnDate: '',
-                            pmInterFileNumber: '',
-                            comment: '',
-                            cmEnterDate: '',
-                            cmReturnDate: '',
-                            cmInvestFileNumber: '',
-                            cmInterFileNumber: '',
-                            cmRepairType: '',
-                            attachment: ''
-                        }}
-                    >
+                <Modal title="add visit" onClose={() => setAddVisitModal(false)} show={addVisitModal}>
+                    <Formik initialValues={visit} onSubmit={(values) => addVisit(values)}>
                         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-                            <form noValidate onSubmit={handleSubmit} style={{ padding: '10px 10px' }}>
+                            <form encType="multipart/form-data" noValidate onSubmit={handleSubmit} style={{ padding: '10px 10px' }}>
                                 <Grid container spacing={1}>
                                     <Grid item xs={12}>
                                         <Stack spacing={1}>
@@ -193,8 +252,8 @@ const MachineDetails = () => {
                                                     <OutlinedInput
                                                         id="visitNumber"
                                                         type="text"
-                                                        value={values.visitNumber}
-                                                        name="visitNumber"
+                                                        value={values.VisitNumber}
+                                                        name="VisitNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter visit number"
@@ -212,17 +271,17 @@ const MachineDetails = () => {
                                                     <OutlinedInput
                                                         id="visitDate"
                                                         type="text"
-                                                        value={values.visitDate}
-                                                        name="visitDate"
+                                                        value={values.VisitDate}
+                                                        name="VisitDate"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter message"
                                                         fullWidth
-                                                        error={Boolean(touched.visitDate && errors.visitDate)}
+                                                        error={Boolean(touched.VisitDate && errors.VisitDate)}
                                                     />
-                                                    {touched.visitDate && errors.visitDate && (
+                                                    {touched.VisitDate && errors.VisitDate && (
                                                         <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.visitDate}
+                                                            {errors.VisitDate}
                                                         </FormHelperText>
                                                     )}
                                                 </div>
@@ -235,16 +294,17 @@ const MachineDetails = () => {
                                             <Select
                                                 labelId="demo-multiple-name-label"
                                                 id="demo-multiple-name"
-                                                value={values.repairType}
+                                                value={values.RepaireType}
+                                                name="RepaireType"
                                                 onChange={handleChange}
                                                 input={<OutlinedInput label="repairType" name="repairType" placeholder="sdqsd" />}
                                             >
                                                 <MenuItem value="finis">finis</MenuItem>
                                                 <MenuItem value="en Progress">en cours</MenuItem>
                                             </Select>
-                                            {touched.repairType && errors.repairType && (
-                                                <FormHelperText error id="standard-weight-helper-text-repairType-login">
-                                                    {errors.repairType}
+                                            {touched.RepaireType && errors.RepaireType && (
+                                                <FormHelperText error id="standard-weight-helper-text-RepaireType-login">
+                                                    {errors.RepaireType}
                                                 </FormHelperText>
                                             )}
                                         </Stack>
@@ -253,21 +313,23 @@ const MachineDetails = () => {
                                         <Stack spacing={1}>
                                             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
                                                 <div>
-                                                    <InputLabel htmlFor="message">pminvestFileNum</InputLabel>
+                                                    <InputLabel htmlFor="message">PmInvestigationFileNumber</InputLabel>
                                                     <OutlinedInput
                                                         id="pminvestFileNum"
                                                         type="text"
-                                                        value={values.pminvestFileNum}
-                                                        name="pminvestFileNum"
+                                                        value={values.PmInvestigationFileNumber}
+                                                        name="PmInvestigationFileNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter visit number"
                                                         fullWidth
-                                                        error={Boolean(touched.pminvestFileNum && errors.pminvestFileNum)}
+                                                        error={Boolean(
+                                                            touched.PmInvestigationFileNumber && errors.PmInvestigationFileNumber
+                                                        )}
                                                     />
-                                                    {touched.pminvestFileNum && errors.pminvestFileNum && (
+                                                    {touched.PmInvestigationFileNumber && errors.PmInvestigationFileNumber && (
                                                         <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.pminvestFileNum}
+                                                            {errors.PmInvestigationFileNumber}
                                                         </FormHelperText>
                                                     )}
                                                 </div>
@@ -276,17 +338,17 @@ const MachineDetails = () => {
                                                     <OutlinedInput
                                                         id="pmReturnDate"
                                                         type="text"
-                                                        value={values.pmReturnDate}
-                                                        name="pmReturnDate"
+                                                        value={values.PmReturnDate}
+                                                        name="PmReturnDate"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter"
                                                         fullWidth
-                                                        error={Boolean(touched.pmReturnDate && errors.pmReturnDate)}
+                                                        error={Boolean(touched.PmReturnDate && errors.PmReturnDate)}
                                                     />
-                                                    {touched.pmReturnDate && errors.pmReturnDate && (
+                                                    {touched.PmReturnDate && errors.PmReturnDate && (
                                                         <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.pmReturnDate}
+                                                            {errors.PmReturnDate}
                                                         </FormHelperText>
                                                     )}
                                                 </div>
@@ -295,17 +357,17 @@ const MachineDetails = () => {
                                                     <OutlinedInput
                                                         id="pmInterFileNumber"
                                                         type="text"
-                                                        value={values.pmInterFileNumber}
-                                                        name="pmInterFileNumber"
+                                                        value={values.PmInterventionFileNumber}
+                                                        name="PmInterventionFileNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter message"
                                                         fullWidth
-                                                        error={Boolean(touched.pmInterFileNumber && errors.pmInterFileNumber)}
+                                                        error={Boolean(touched.PmInterventionFileNumber && errors.PmInterventionFileNumber)}
                                                     />
-                                                    {touched.pmInterFileNumber && errors.pmInterFileNumber && (
+                                                    {touched.PmInterventionFileNumber && errors.PmInterventionFileNumber && (
                                                         <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.pmInterFileNumber}
+                                                            {errors.PmInterventionFileNumber}
                                                         </FormHelperText>
                                                     )}
                                                 </div>
@@ -320,17 +382,17 @@ const MachineDetails = () => {
                                                     <OutlinedInput
                                                         id="cmEnterDate"
                                                         type="text"
-                                                        value={values.cmEnterDate}
-                                                        name="cmEnterDate"
+                                                        value={values.CmEnterDate}
+                                                        name="CmEnterDate"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter visit number"
                                                         fullWidth
-                                                        error={Boolean(touched.cmEnterDate && errors.cmEnterDate)}
+                                                        error={Boolean(touched.CmEnterDate && errors.CmEnterDate)}
                                                     />
-                                                    {touched.cmEnterDate && errors.cmEnterDate && (
+                                                    {touched.CmEnterDate && errors.CmEnterDate && (
                                                         <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.cmEnterDate}
+                                                            {errors.CmEnterDate}
                                                         </FormHelperText>
                                                     )}
                                                 </div>
@@ -360,40 +422,42 @@ const MachineDetails = () => {
                                         <Stack>
                                             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
                                                 <div>
-                                                    <InputLabel htmlFor="message">cmInvestFileNumber</InputLabel>
+                                                    <InputLabel htmlFor="message">CmInterventionFileNumber</InputLabel>
                                                     <OutlinedInput
                                                         id="cmInvestFileNumber"
                                                         type="text"
-                                                        value={values.cmInvestFileNumber}
-                                                        name="cmInvestFileNumber"
+                                                        value={values.CmInterventionFileNumber}
+                                                        name="CmInterventionFileNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter visit number"
                                                         fullWidth
-                                                        error={Boolean(touched.cmInvestFileNumber && errors.cmInvestFileNumber)}
+                                                        error={Boolean(touched.CmInterventionFileNumber && errors.CmInterventionFileNumber)}
                                                     />
-                                                    {touched.cmInvestFileNumber && errors.cmInvestFileNumber && (
+                                                    {touched.CmInterventionFileNumber && errors.CmInterventionFileNumber && (
                                                         <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.cmInvestFileNumber}
+                                                            {errors.CmInterventionFileNumber}
                                                         </FormHelperText>
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <InputLabel htmlFor="message">cmInterFileNumber</InputLabel>
+                                                    <InputLabel htmlFor="message">CmInvestigationFileNumber</InputLabel>
                                                     <OutlinedInput
-                                                        id="cmInterFileNumber"
+                                                        id="CmInvestigationFileNumber"
                                                         type="text"
-                                                        value={values.cmInterFileNumber}
-                                                        name="cmInterFileNumber"
+                                                        value={values.CmInvestigationFileNumber}
+                                                        name="CmInvestigationFileNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter"
                                                         fullWidth
-                                                        error={Boolean(touched.cmInterFileNumber && errors.cmInterFileNumber)}
+                                                        error={Boolean(
+                                                            touched.CmInvestigationFileNumber && errors.CmInvestigationFileNumber
+                                                        )}
                                                     />
-                                                    {touched.cmInterFileNumber && errors.cmInterFileNumber && (
+                                                    {touched.CmInvestigationFileNumber && errors.CmInvestigationFileNumber && (
                                                         <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.cmInterFileNumber}
+                                                            {errors.CmInvestigationFileNumber}
                                                         </FormHelperText>
                                                     )}
                                                 </div>
@@ -402,17 +466,17 @@ const MachineDetails = () => {
                                                     <OutlinedInput
                                                         id="cmRepairType"
                                                         type="text"
-                                                        value={values.cmRepairType}
-                                                        name="cmRepairType"
+                                                        value={values.CmRepaireType}
+                                                        name="CmRepaireType"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter message"
                                                         fullWidth
-                                                        error={Boolean(touched.cmRepairType && errors.cmRepairType)}
+                                                        error={Boolean(touched.CmRepaireType && errors.CmRepaireType)}
                                                     />
-                                                    {touched.cmRepairType && errors.cmRepairType && (
+                                                    {touched.CmRepaireType && errors.CmRepaireType && (
                                                         <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.cmRepairType}
+                                                            {errors.CmRepaireType}
                                                         </FormHelperText>
                                                     )}
                                                 </div>
@@ -425,17 +489,17 @@ const MachineDetails = () => {
                                             <OutlinedInput
                                                 id="finalState"
                                                 type="text"
-                                                value={values.finalState}
-                                                name="finalState"
+                                                value={values.FinalState}
+                                                name="FinalState"
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
-                                                placeholder="finalState jointe"
+                                                placeholder="FinalState jointe"
                                                 fullWidth
-                                                error={Boolean(touched.finalState && errors.finalState)}
+                                                error={Boolean(touched.FinalState && errors.FinalState)}
                                             />
-                                            {touched.finalState && errors.finalState && (
-                                                <FormHelperText error id="standard-weight-helper-text-finalState-login">
-                                                    {errors.finalState}
+                                            {touched.FinalState && errors.FinalState && (
+                                                <FormHelperText error id="standard-weight-helper-text-FinalState-login">
+                                                    {errors.FinalState}
                                                 </FormHelperText>
                                             )}
                                         </Stack>
@@ -446,19 +510,19 @@ const MachineDetails = () => {
                                             <OutlinedInput
                                                 id="comment"
                                                 type="text"
-                                                value={values.comment}
-                                                name="comment"
+                                                value={values.Comment}
+                                                name="Comment"
                                                 multiline
                                                 maxRows={4}
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
-                                                placeholder="Enter comment"
+                                                placeholder="Enter Comment"
                                                 fullWidth
-                                                error={Boolean(touched.comment && errors.comment)}
+                                                error={Boolean(touched.Comment && errors.Comment)}
                                             />
-                                            {touched.comment && errors.comment && (
-                                                <FormHelperText error id="standard-weight-helper-text-comment-login">
-                                                    {errors.comment}
+                                            {touched.Comment && errors.Comment && (
+                                                <FormHelperText error id="standard-weight-helper-text-Comment-login">
+                                                    {errors.Comment}
                                                 </FormHelperText>
                                             )}
                                         </Stack>
@@ -467,19 +531,20 @@ const MachineDetails = () => {
                                         <Stack>
                                             <InputLabel htmlFor="piece">piece jointe</InputLabel>
                                             <OutlinedInput
+                                                ref={inputRef}
                                                 id="piece"
                                                 type="file"
-                                                value={values.piece}
-                                                name="piece"
+                                                value={values.Attachment}
+                                                name="Attachment"
                                                 onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                placeholder="piece jointe"
+                                                onChange={(e) => setFile(e.target.files[0])}
+                                                placeholder="Attachment jointe"
                                                 fullWidth
-                                                error={Boolean(touched.email && errors.email)}
+                                                error={Boolean(touched.Attachment && errors.Attachment)}
                                             />
-                                            {touched.email && errors.email && (
-                                                <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                    {errors.email}
+                                            {touched.Attachment && errors.Attachment && (
+                                                <FormHelperText error id="standard-weight-helper-text-Attachment-login">
+                                                    {errors.Attachment}
                                                 </FormHelperText>
                                             )}
                                         </Stack>
@@ -520,18 +585,18 @@ const MachineDetails = () => {
                     <span>sale date</span>
                 </div>
                 <div className="users-grid-body">
-                    <div onClick={() => navigate('/dashboard/admin/users/qsdsddqqsdsd/machine/qsdqsdqsd/visit/sdqsdqsd')}>
-                        <span>#21qsd654321dq</span>
-                        <span>qsdqsd</span>
-                        <span>#6+23qsd4qsqd</span>
-                        <span>27/12/2023</span>
-                    </div>
-                    <div>
-                        <span>#21qsd654321dq</span>
-                        <span>qdqsdzfer</span>
-                        <span>#6+23qsd4qsqd</span>
-                        <span>26/08/2023</span>
-                    </div>
+                    {visits.length > 0 ? (
+                        visits.map((item, idx) => (
+                            <div key={idx} onClick={() => navigate('/dashboard/admin/users/qsdsddqqsdsd/machine/qsdqsdqsd/visit/sdqsdqsd')}>
+                                <span>#21qsd654321dq</span>
+                                <span>qsdqsd</span>
+                                <span>#6+23qsd4qsqd</span>
+                                <span>27/12/2023</span>
+                            </div>
+                        ))
+                    ) : (
+                        <span>machine have not visits yet</span>
+                    )}
                 </div>
             </div>
         </div>

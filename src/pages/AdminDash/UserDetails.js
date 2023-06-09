@@ -29,6 +29,7 @@ import { url } from 'constants/urls';
 import Spinner from 'components/Spinner';
 import axios from 'axios';
 import { trans } from 'utils/helpers';
+import { useStateContext } from 'context/authContext';
 // =========
 const UserDetails = () => {
     const [update, setUpdate] = useState(false);
@@ -40,7 +41,6 @@ const UserDetails = () => {
     const [showPassword, setShowPassword] = React.useState(false);
 
     const navigate = useNavigate();
-    console.log(user);
 
     // user id
     const { userId } = useParams();

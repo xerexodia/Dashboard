@@ -21,18 +21,26 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-
+import axios from 'axios';
 // project import
 import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { url } from 'constants/urls';
+import { useStateContext } from 'context/authContext';
+import { useNavigate } from 'react-router-dom';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const AuthLogin = () => {
+    const { setUser } = useStateContext();
     const [checked, setChecked] = React.useState(false);
-
+    const navigate = useNavigate();
+    const storage = (param) => {
+        localStorage.setItem('user', JSON.stringify(param));
+        setUser(param);
+    };
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -46,16 +54,28 @@ const AuthLogin = () => {
         <>
             <Formik
                 initialValues={{
-                    email: '',
+                    emailAddress: '',
                     password: '',
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
-                    email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+                    emailAddress: Yup.string().email('Must be a valid emailAddress').max(255).required('emailAddress is required'),
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
+                        const data = await axios.post(`${url}UserLogin/Login`, values);
+                        if (data.status == 200) {
+                            storage(data?.data?.returnedUser);
+                            if (data.data?.returnedUser?.isAdmin) {
+                                navigate('/dashboard/admin/users');
+                                return;
+                            }
+                            if (!data.data?.returnedUser?.isAdmin) {
+                                navigate('/dashboard/user/profile');
+                                return;
+                            }
+                        }
                         setStatus({ success: false });
                         setSubmitting(false);
                     } catch (err) {
@@ -70,21 +90,21 @@ const AuthLogin = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <Stack spacing={1}>
-                                    <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                                    <InputLabel htmlFor="emailAddress-login">Email Address</InputLabel>
                                     <OutlinedInput
-                                        id="email-login"
-                                        type="email"
-                                        value={values.email}
-                                        name="email"
+                                        id="emailAddress-login"
+                                        type="emailAddress"
+                                        value={values.emailAddress}
+                                        name="emailAddress"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
                                         placeholder="Enter email address"
                                         fullWidth
-                                        error={Boolean(touched.email && errors.email)}
+                                        error={Boolean(touched.emailAddress && errors.emailAddress)}
                                     />
-                                    {touched.email && errors.email && (
-                                        <FormHelperText error id="standard-weight-helper-text-email-login">
-                                            {errors.email}
+                                    {touched.emailAddress && errors.emailAddress && (
+                                        <FormHelperText error id="standard-weight-helper-text-emailAddress-login">
+                                            {errors.emailAddress}
                                         </FormHelperText>
                                     )}
                                 </Stack>

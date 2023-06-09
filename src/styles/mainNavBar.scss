@@ -15,16 +15,7 @@
             font-size: 36px;
             color: grey;
         }
-        & > :nth-child(3) {
-            padding: 10px 20px;
-            background-color: #1890ff;
-            color: white;
-            font-weight: 600;
-            border-radius: 5px;
-            &:hover {
-                background-color: #0083fd;
-            }
-        }
+
         & > :nth-child(2) {
             display: flex;
             gap: 23px;
@@ -39,5 +30,15 @@
     }
     a {
         text-decoration: none;
+    }
+}
+.auth {
+    padding: 10px 20px;
+    background-color: #1890ff;
+    color: white;
+    font-weight: 600;
+    border-radius: 5px;
+    &:hover {
+        background-color: #0083fd;
     }
 }

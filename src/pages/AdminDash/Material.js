@@ -1,7 +1,34 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import { url } from 'constants/urls';
+import Spinner from 'components/Spinner';
+import { useStateContext } from 'context/authContext';
+
 const Material = () => {
+    const [machines, setMachines] = useState([]);
+    const getMachines = async () => {
+        return await axios.get(`${url}Machine/AllMachines`);
+    };
+    const deleteMachine = async (id) => {
+        await axios.delete(`${url}Machine/${id}`);
+        const filter = machines.filter((item) => item.serialNumber !== id);
+        setMachines(filter);
+    };
+    React.useEffect(() => {
+        getMachines()
+            .then((res) => {
+                setMachines(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        return () => {
+            setMachines([]);
+        };
+    }, []);
+
     return (
         <div>
             <div className="dash-header">
@@ -16,24 +43,25 @@ const Material = () => {
                     <span>Action</span>
                 </div>
                 <div className="grid-body">
-                    <div>
-                        <span>#21qsd654321dq</span>
-                        <span>qsdqsd</span>
-                        <span>#6+23qsd4qsqd</span>
-                        <span>27/12/2023</span>
-                        <span>
-                            <DeleteOutlined />
-                        </span>
-                    </div>
-                    <div>
-                        <span>#21qsd654321dq</span>
-                        <span>qdqsdzfer</span>
-                        <span>#6+23qsd4qsqd</span>
-                        <span>26/08/2023</span>
-                        <span>
-                            <DeleteOutlined />
-                        </span>
-                    </div>
+                    {machines.length > 0 ? (
+                        machines.map((item, idx) => (
+                            <div>
+                                <span>#{item.serialNumber}</span>
+                                <span>{item.machineType}</span>
+                                <span>#{item.userId}</span>
+                                <span>{item.sellDate}</span>
+                                <span>
+                                    <DeleteOutlined
+                                        onClick={() => {
+                                            deleteMachine(item.serialNumber);
+                                        }}
+                                    />
+                                </span>
+                            </div>
+                        ))
+                    ) : (
+                        <span>no machines found</span>
+                    )}
                 </div>
             </div>
         </div>

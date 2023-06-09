@@ -1,10 +1,13 @@
 // project import
-import dashboard from './AdminDashboard';
+
+import dashboardAdmin from './AdminDashboard';
+import dashboardClient from './ClientDashboard';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-    items: [dashboard]
+    1: [dashboardAdmin],
+    0: [dashboardClient]
 };
 
 export default menuItems;

@@ -28,6 +28,9 @@ import SettingTab from './SettingTab';
 // assets
 import avatar2 from 'assets/images/users/avatar-2.png';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { useStateContext } from 'context/authContext';
+import { useNavigate } from 'react-router-dom';
+import { role, roleChecker } from 'utils/helpers';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -55,7 +58,9 @@ function a11yProps(index) {
 
 const Profile = () => {
     const theme = useTheme();
-
+    const { logout, user } = useStateContext();
+    const navigate = useNavigate();
+    const role = roleChecker(user.isAdmin);
     const handleLogout = async () => {
         // logout
     };
@@ -98,7 +103,7 @@ const Profile = () => {
             >
                 <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
                     <Avatar alt="profile user" src={avatar2} sx={{ width: 32, height: 32 }} />
-                    <Typography variant="subtitle1">Jihed</Typography>
+                    <Typography variant="subtitle1">{user.userName}</Typography>
                 </Stack>
             </ButtonBase>
             <Popper
@@ -139,17 +144,19 @@ const Profile = () => {
                                             <Grid container justifyContent="space-between" alignItems="center">
                                                 <Grid item>
                                                     <Stack direction="row" spacing={1.25} alignItems="center">
-                                                        <Avatar alt="profile user" src={avatar2} sx={{ width: 32, height: 32 }} />
+                                                        <IconButton onClick={() => navigate(`/dashboard/${role}`)}>
+                                                            <Avatar alt="profile user" src={avatar2} sx={{ width: 32, height: 32 }} />
+                                                        </IconButton>
                                                         <Stack>
-                                                            <Typography variant="h6">Jihed</Typography>
+                                                            <Typography variant="h6">{user.userName}</Typography>
                                                             <Typography variant="body2" color="textSecondary">
-                                                                .net Developper
+                                                                {user.emailAddress}
                                                             </Typography>
                                                         </Stack>
                                                     </Stack>
                                                 </Grid>
                                                 <Grid item>
-                                                    <IconButton size="large" color="secondary" onClick={handleLogout}>
+                                                    <IconButton size="large" color="secondary" onClick={logout}>
                                                         <LogoutOutlined />
                                                     </IconButton>
                                                 </Grid>

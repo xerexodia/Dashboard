@@ -12,53 +12,45 @@ const icons = {
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
-const dashboardAdmin = {
+const dashboardClient = {
     id: 'group-dashboard',
     title: 'Dashboard',
     type: 'group',
     children: [
         {
             id: 'users',
-            title: 'Users',
+            title: 'Profile',
             type: 'item',
-            url: '/dashboard/admin/users',
+            url: '/dashboard/user/profile',
             icon: icons.UserOutlined,
             breadcrumbs: false
         },
 
         {
             id: 'material',
-            title: 'Matériel',
+            title: 'Equipement',
             type: 'item',
-            url: '/dashboard/admin/material',
+            url: '/dashboard/user/equipement',
             icon: icons.ToolOutlined,
             breadcrumbs: false
         },
         {
             id: 'visit',
-            title: 'Visite',
+            title: 'Bon de commande',
             type: 'item',
-            url: '/dashboard/admin/visit',
+            url: '/dashboard/user/bon',
             icon: icons.ProfileOutlined,
             breadcrumbs: false
         },
         {
             id: 'info',
-            title: 'Info client',
+            title: 'Contact admin',
             type: 'item',
-            url: '/dashboard/admin/infoClient',
+            url: '/dashboard/user/contact',
             icon: icons.MessageOutlined,
-            breadcrumbs: false
-        },
-        {
-            id: 'equipement',
-            title: 'Equipement',
-            type: 'item',
-            url: '/dashboard/admin/equipement',
-            icon: icons.ToolOutlined,
             breadcrumbs: false
         }
     ]
 };
 
-export default dashboardAdmin;
+export default dashboardClient;

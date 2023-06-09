@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'styles/userDetails.scss';
 import 'styles/headerDash.scss';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -24,21 +24,66 @@ import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
-import { set } from 'lodash';
+import axios from 'axios';
+import { url } from 'constants/urls';
+import Spinner from 'components/Spinner';
+
 const Equipement = () => {
     const [show, setShow] = useState(false);
+    const [data, setData] = useState([]);
+    const [file, setFile] = useState('');
+    const [loading, setLoading] = useState(false);
+    const getData = async () => {
+        setLoading(true);
+        return await axios.get(`${url}GalleryMachine/MachinesGallery`);
+    };
+    console.log(data);
+    useEffect(() => {
+        getData()
+            .then((res) => {
+                setData(res.data), setLoading(false);
+            })
+            .catch((err) => {
+                console.log(err), setLoading(false);
+            });
+
+        return () => {
+            setData([]);
+        };
+    }, []);
+
     return (
         <div>
+            {/* <img src={file} alt="" style={{ width: 60, height: 60 }} /> */}
             <div className="dash-header">
                 <span>Liste des équipement</span>
                 <button onClick={() => setShow(true)}>ajouter</button>
                 <Modal title="notifier utilisateur" onClose={() => setShow(false)} show={show}>
                     <Formik
                         initialValues={{
-                            title: '',
-                            detail: '',
-                            prix: '',
-                            piece: ''
+                            Title: '',
+                            Description: '',
+                            Category: '',
+                            Attachment: ''
+                        }}
+                        onSubmit={async (values) => {
+                            console.log(values);
+                            try {
+                                let formData = new FormData();
+                                for (let el of Object.keys(values)) {
+                                    formData.append(el, values[el]);
+                                }
+                                formData.append('Attachment', file);
+                                for (let el of formData) {
+                                    console.log(el);
+                                }
+                                const equip = await axios.post(`${url}GalleryMachine/AddGallery`, formData, {
+                                    headers: { 'Content-Type': 'multipart/form-data' }
+                                });
+                                console.log(equip);
+                            } catch (error) {
+                                console.log(error);
+                            }
                         }}
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
@@ -48,19 +93,19 @@ const Equipement = () => {
                                         <Stack spacing={1}>
                                             <InputLabel htmlFor="title">nom</InputLabel>
                                             <OutlinedInput
-                                                id="title"
+                                                id="Title"
                                                 type="text"
-                                                value={values.title}
-                                                name="title"
+                                                value={values.Title}
+                                                name="Title"
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
-                                                placeholder="Enter title"
+                                                placeholder="Enter Title"
                                                 fullWidth
-                                                error={Boolean(touched.title && errors.title)}
+                                                error={Boolean(touched.Title && errors.Title)}
                                             />
-                                            {touched.title && errors.title && (
-                                                <FormHelperText error id="standard-weight-helper-text-title-login">
-                                                    {errors.title}
+                                            {touched.Title && errors.Title && (
+                                                <FormHelperText error id="standard-weight-helper-text-Title-login">
+                                                    {errors.Title}
                                                 </FormHelperText>
                                             )}
                                         </Stack>
@@ -71,40 +116,40 @@ const Equipement = () => {
                                             <OutlinedInput
                                                 id="detail"
                                                 type="text"
-                                                value={values.detail}
-                                                name="detail"
+                                                value={values.Description}
+                                                name="Description"
                                                 multiline
                                                 maxRows={4}
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
-                                                placeholder="Enter detail"
+                                                placeholder="Enter Description"
                                                 fullWidth
-                                                error={Boolean(touched.detail && errors.detail)}
+                                                error={Boolean(touched.Description && errors.Description)}
                                             />
-                                            {touched.detail && errors.detail && (
-                                                <FormHelperText error id="standard-weight-helper-text-detail-login">
-                                                    {errors.detail}
+                                            {touched.Description && errors.Description && (
+                                                <FormHelperText error id="standard-weight-helper-text-Description-login">
+                                                    {errors.Description}
                                                 </FormHelperText>
                                             )}
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Stack spacing={1}>
-                                            <InputLabel htmlFor="prix">Prix</InputLabel>
+                                            <InputLabel htmlFor="prix">Category</InputLabel>
                                             <OutlinedInput
-                                                id="prix"
+                                                id="Category"
                                                 type="text"
-                                                value={values.prix}
-                                                name="prix"
+                                                value={values.Category}
+                                                name="Category"
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
-                                                placeholder="Enter prix"
+                                                placeholder="Enter Category"
                                                 fullWidth
-                                                error={Boolean(touched.prix && errors.prix)}
+                                                error={Boolean(touched.Category && errors.Category)}
                                             />
-                                            {touched.prix && errors.prix && (
-                                                <FormHelperText error id="standard-weight-helper-text-prix-login">
-                                                    {errors.prix}
+                                            {touched.Category && errors.Category && (
+                                                <FormHelperText error id="standard-weight-helper-text-Category-login">
+                                                    {errors.Category}
                                                 </FormHelperText>
                                             )}
                                         </Stack>
@@ -113,19 +158,21 @@ const Equipement = () => {
                                         <Stack spacing={1}>
                                             <InputLabel htmlFor="piece">Piece lointe</InputLabel>
                                             <OutlinedInput
-                                                id="piece"
+                                                id="Attachment"
                                                 type="file"
-                                                value={values.piece}
-                                                name="piece"
+                                                value={values.Attachment}
+                                                name="Attachment"
                                                 onBlur={handleBlur}
-                                                onChange={handleChange}
+                                                onChange={(e) => {
+                                                    setFile(URL.createObjectURL(e.target.files[0])), handleChange('Attachment');
+                                                }}
                                                 placeholder="piece jointe"
                                                 fullWidth
-                                                error={Boolean(touched.email && errors.email)}
+                                                error={Boolean(touched.Attachement && errors.Attachement)}
                                             />
-                                            {touched.email && errors.email && (
-                                                <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                    {errors.email}
+                                            {touched.Attachement && errors.Attachement && (
+                                                <FormHelperText error id="standard-weight-helper-text-Attachement-login">
+                                                    {errors.Attachement}
                                                 </FormHelperText>
                                             )}
                                         </Stack>
@@ -161,30 +208,29 @@ const Equipement = () => {
             <div className="grid-data">
                 <div>
                     <span>id</span>
-                    <span>nom</span>
-                    <span>prix</span>
-                    <span>detaails</span>
+                    <span>title</span>
+                    <span>description</span>
+                    <span>category</span>
                     <span>Action</span>
                 </div>
                 <div className="grid-body">
-                    <div>
-                        <span>#21qsd654321dq</span>
-                        <span>#qsdqsqsd6541d</span>
-                        <span>#6+23qsd4qsqd</span>
-                        <span>finished</span>
-                        <span>
-                            <DeleteOutlined />
-                        </span>
-                    </div>
-                    <div>
-                        <span>#21qsd654321dq</span>
-                        <span>#qsdqsqsd6541d</span>
-                        <span>#6+23qsd4qsqd</span>
-                        <span>finished</span>
-                        <span>
-                            <DeleteOutlined />
-                        </span>
-                    </div>
+                    {loading ? (
+                        <Spinner />
+                    ) : data.length < 0 ? (
+                        <span>no euipement to display for now</span>
+                    ) : (
+                        data.map((item, idx) => (
+                            <div key={idx}>
+                                <span>#{item.id}</span>
+                                <span>{item.title}</span>
+                                <span>{item.description}</span>
+                                <span>{item.category}</span>
+                                <span>
+                                    <DeleteOutlined />
+                                </span>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
         </div>
