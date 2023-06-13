@@ -96,3 +96,16 @@
         }
     }
 }
+.visit-body {
+    background-color: #fff;
+    border-radius: 10px;
+    height: 500px;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    flex-wrap: wrap;
+    & > :nth-child(n) {
+        display: flex;
+        flex-direction: column;
+    }
+}

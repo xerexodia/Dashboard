@@ -38,7 +38,6 @@ const MachineDetails = () => {
     const [file, setFile] = useState();
     const inputRef = useRef();
     const navigate = useNavigate();
-    console.log(file);
     const { machineId } = useParams();
     const [visit, setVisit] = useState({
         VisitNumber: '',
@@ -68,17 +67,10 @@ const MachineDetails = () => {
             formData.append(el, values[el]);
         }
 
-        const reader = new FileReader();
-
-        if (file) {
-            reader.readAsDataURL(file);
-        }
-        reader.onload = (readerEvent) => {
-            formData.append('Attachement', readerEvent.target.result);
-            console.log(readerEvent.target.result);
-        };
+        formData.append('Attachement', file);
         formData.append('MachineSerialNumber', machine.serialNumber);
         formData.append('MachineType', machine.machineType);
+
         for (let el of formData) {
             console.log(el);
         }
@@ -87,6 +79,24 @@ const MachineDetails = () => {
         setVisits((prev) => [...prev, data.data]);
     };
 
+    const addNotif = async (values) => {
+        const formData = new FormData();
+        for (let el of Object.keys(values)) {
+            formData.append(el, values[el]);
+        }
+
+        formData.append('Attachement', file);
+        formData.append('MachineSerialNumber', machine.serialNumber);
+        formData.append('MachineType', machine.machineType);
+
+        for (let el of formData) {
+            console.log(el);
+        }
+        const data = await axios.post(`${url}MachineStateNotification/AddMachineNotification`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        console.log(data);
+    };
     useEffect(() => {
         getMachine()
             .then((res) => {
@@ -135,9 +145,8 @@ const MachineDetails = () => {
                     <Modal title="notifier utilisateur" onClose={() => setInformerModal(false)} show={informerModal}>
                         <Formik
                             initialValues={{
-                                etat: '',
-                                message: '',
-                                piece: ''
+                                MachineState: '',
+                                Message: ''
                             }}
                         >
                             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
@@ -149,9 +158,9 @@ const MachineDetails = () => {
                                                 <Select
                                                     labelId="demo-multiple-name-label"
                                                     id="demo-multiple-name"
-                                                    value={values.etat}
+                                                    value={values.MachineState}
                                                     onChange={handleChange}
-                                                    input={<OutlinedInput label="etat" name="etat" placeholder="sdqsd" />}
+                                                    input={<OutlinedInput label="etat" name="MachineState" placeholder="sdqsd" />}
                                                 >
                                                     <MenuItem value="finis">finis</MenuItem>
                                                     <MenuItem value="en Progress">en cours</MenuItem>
@@ -169,19 +178,19 @@ const MachineDetails = () => {
                                                 <OutlinedInput
                                                     id="message"
                                                     type="text"
-                                                    value={values.message}
-                                                    name="message"
+                                                    value={values.Message}
+                                                    name="Message"
                                                     multiline
                                                     maxRows={4}
                                                     onBlur={handleBlur}
                                                     onChange={handleChange}
                                                     placeholder="Enter message"
                                                     fullWidth
-                                                    error={Boolean(touched.email && errors.email)}
+                                                    error={Boolean(touched.Message && errors.Message)}
                                                 />
-                                                {touched.email && errors.email && (
-                                                    <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                        {errors.email}
+                                                {touched.Message && errors.Message && (
+                                                    <FormHelperText error id="standard-weight-helper-text-Message-login">
+                                                        {errors.Message}
                                                     </FormHelperText>
                                                 )}
                                             </Stack>
@@ -192,10 +201,10 @@ const MachineDetails = () => {
                                                 <OutlinedInput
                                                     id="piece"
                                                     type="file"
-                                                    value={values.piece}
+                                                    // value={values.piece}
                                                     name="piece"
                                                     onBlur={handleBlur}
-                                                    onChange={handleChange}
+                                                    onChange={(e) => setFile(e.target.files[0])}
                                                     placeholder="piece jointe"
                                                     fullWidth
                                                     error={Boolean(touched.email && errors.email)}
@@ -401,8 +410,8 @@ const MachineDetails = () => {
                                                     <OutlinedInput
                                                         id="cmReturnDate"
                                                         type="text"
-                                                        value={values.cmReturnDate}
-                                                        name="cmReturnDate"
+                                                        value={values.CmReturnDate}
+                                                        name="CmReturnDate"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter"
@@ -579,19 +588,22 @@ const MachineDetails = () => {
             </div>
             <div className="users-grid-data">
                 <div>
-                    <span>serial number</span>
-                    <span>machine type</span>
-                    <span>clientId</span>
-                    <span>sale date</span>
+                    <span>id</span>
+                    <span>final state</span>
+                    <span>RepaireType</span>
+                    <span>visit date</span>
                 </div>
                 <div className="users-grid-body">
                     {visits.length > 0 ? (
                         visits.map((item, idx) => (
-                            <div key={idx} onClick={() => navigate('/dashboard/admin/users/qsdsddqqsdsd/machine/qsdqsdqsd/visit/sdqsdqsd')}>
-                                <span>#21qsd654321dq</span>
-                                <span>qsdqsd</span>
-                                <span>#6+23qsd4qsqd</span>
-                                <span>27/12/2023</span>
+                            <div
+                                key={idx}
+                                onClick={() => navigate(`/dashboard/admin/users/qsdsddqqsdsd/machine/qsdqsdqsd/visit/${item.id}`)}
+                            >
+                                <span>#{item.id}</span>
+                                <span>{item.finalState}</span>
+                                <span>#{item.repaireType}</span>
+                                <span>{item.visitDate}</span>
                             </div>
                         ))
                     ) : (

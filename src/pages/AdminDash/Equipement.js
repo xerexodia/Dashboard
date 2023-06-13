@@ -63,8 +63,7 @@ const Equipement = () => {
                         initialValues={{
                             Title: '',
                             Description: '',
-                            Category: '',
-                            Attachment: ''
+                            Category: ''
                         }}
                         onSubmit={async (values) => {
                             console.log(values);
@@ -80,7 +79,8 @@ const Equipement = () => {
                                 const equip = await axios.post(`${url}GalleryMachine/AddGallery`, formData, {
                                     headers: { 'Content-Type': 'multipart/form-data' }
                                 });
-                                console.log(equip);
+                                setData((prev) => [...prev, equip.data]);
+                                setShow(false);
                             } catch (error) {
                                 console.log(error);
                             }
@@ -160,11 +160,11 @@ const Equipement = () => {
                                             <OutlinedInput
                                                 id="Attachment"
                                                 type="file"
-                                                value={values.Attachment}
+                                                defaultValue={''}
                                                 name="Attachment"
                                                 onBlur={handleBlur}
                                                 onChange={(e) => {
-                                                    setFile(URL.createObjectURL(e.target.files[0])), handleChange('Attachment');
+                                                    setFile(e.target.files[0]), handleChange('Attachment');
                                                 }}
                                                 placeholder="piece jointe"
                                                 fullWidth
@@ -226,7 +226,12 @@ const Equipement = () => {
                                 <span>{item.description}</span>
                                 <span>{item.category}</span>
                                 <span>
-                                    <DeleteOutlined />
+                                    <DeleteOutlined
+                                        onClick={async () => {
+                                            await axios.delete(`${url}GalleryMachine/Gallery/${item.id}`);
+                                            setData(data.filter((x) => x.id !== item.id));
+                                        }}
+                                    />
                                 </span>
                             </div>
                         ))

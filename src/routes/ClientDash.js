@@ -16,7 +16,7 @@ import BonCommande from 'pages/clientDashboard/BonCommande';
 
 // ==============================|| DASH ROUTING ||============================== //
 
-const AdminDash = {
+const ClientDashboard = {
     path: '/dashboard/user',
     element: <DashLayout />,
     children: [
@@ -39,4 +39,4 @@ const AdminDash = {
     ]
 };
 
-export default AdminDash;
+export default ClientDashboard;

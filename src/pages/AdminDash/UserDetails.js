@@ -39,7 +39,7 @@ const UserDetails = () => {
     const [machineModal, setMachineModal] = useState(false);
     const [Loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = React.useState(false);
-
+    const [file, setFile] = useState();
     const navigate = useNavigate();
 
     // user id
@@ -63,6 +63,14 @@ const UserDetails = () => {
             autoClose: 2000
         });
         navigate(-1);
+    };
+    const informer = async (values) => {
+        const formData = new FormData();
+        formData.append('Attachment', file);
+        formData.append('UserId', userId);
+        formData.append('Message', values.Message);
+        const data = await axios.post(`${url}MessageToCLient/SendMessageToClient`, formData);
+        console.log(data);
     };
 
     useEffect(() => {
@@ -101,9 +109,9 @@ const UserDetails = () => {
                         <Modal title="informer utilisateur" onClose={() => setInformerModal(false)} show={informerModal}>
                             <Formik
                                 initialValues={{
-                                    message: '',
-                                    piece: ''
+                                    Message: ''
                                 }}
+                                onSubmit={(values) => informer(values)}
                             >
                                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                                     <form noValidate onSubmit={handleSubmit} style={{ padding: '20px 30px' }}>
@@ -114,19 +122,19 @@ const UserDetails = () => {
                                                     <OutlinedInput
                                                         id="message"
                                                         type="text"
-                                                        value={values.message}
-                                                        name="message"
+                                                        value={values.Message}
+                                                        name="Message"
                                                         multiline
                                                         maxRows={4}
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
                                                         placeholder="Enter message"
                                                         fullWidth
-                                                        error={Boolean(touched.email && errors.email)}
+                                                        error={Boolean(touched.Message && errors.Message)}
                                                     />
-                                                    {touched.email && errors.email && (
-                                                        <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.email}
+                                                    {touched.Message && errors.Message && (
+                                                        <FormHelperText error id="standard-weight-helper-text-Message-login">
+                                                            {errors.Message}
                                                         </FormHelperText>
                                                     )}
                                                 </Stack>
@@ -137,10 +145,10 @@ const UserDetails = () => {
                                                     <OutlinedInput
                                                         id="piece"
                                                         type="file"
-                                                        value={values.piece}
+                                                        value=""
                                                         name="piece"
                                                         onBlur={handleBlur}
-                                                        onChange={handleChange}
+                                                        onChange={(e) => setFile(e.target.files[0])}
                                                         placeholder="piece jointe"
                                                         fullWidth
                                                         error={Boolean(touched.email && errors.email)}
