@@ -3,13 +3,17 @@ import axios from 'axios';
 import { useStateContext } from 'context/authContext';
 import { url } from 'constants/urls';
 import { DeleteOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const Equipement = () => {
     const { user } = useStateContext();
+    console.log(user.id);
     const [machines, setMachines] = useState([]);
+    const navigate = useNavigate();
     const getMachines = async () => {
-        return await axios.get(`${url}MyMachine/MyMachines?clientId=19`);
+        return await axios.get(`${url}MyMachine/MyMachines?clientId${user.id}`);
     };
+    console.log(machines);
     useEffect(() => {
         getMachines()
             .then((res) => setMachines(res.data))
@@ -30,10 +34,10 @@ const Equipement = () => {
                     <span>clientId</span>
                     <span>sale date</span>
                 </div>
-                <div className="grid-body">
+                <div className="users-grid-body">
                     {machines.length > 0 ? (
                         machines.map((item, idx) => (
-                            <div key={idx}>
+                            <div key={idx} onClick={() => navigate(`/dashboard/user/equipement/${item.serialNumber}`)}>
                                 <span>#{item.serialNumber}</span>
                                 <span>{item.machineType}</span>
                                 <span>#{item.userId}</span>

@@ -42,3 +42,15 @@
         background-color: #0083fd;
     }
 }
+.contact-body {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 13px;
+    height: 72vh;
+    box-shadow: 1px 3px 7px rgba($color: #b4b4b4, $alpha: 0.2);
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+}

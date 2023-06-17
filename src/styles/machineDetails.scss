@@ -38,3 +38,27 @@
         }
     }
 }
+
+.machine-notif {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    & > :first-child {
+        font-size: 22px;
+    }
+}
+.notif {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    width: fit-content;
+    padding: 10px;
+    & > :last-child {
+        text-decoration: underline;
+        &:hover {
+            color: blue;
+            cursor: pointer;
+        }
+    }
+}
