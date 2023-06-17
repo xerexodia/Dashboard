@@ -32,62 +32,84 @@ import Spinner from 'components/Spinner';
 const Users = () => {
     const navigate = useNavigate();
     const [show, setShow] = useState(false);
-    const [showPassword, setShowPassword] = React.useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [usernameFilter, setUsernameFilter] = useState('');
+  
     const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
+      setShowPassword(!showPassword);
     };
+  
     const handleMouseDownPassword = (event) => {
-        event.preventDefault();
+      event.preventDefault();
     };
+  
     // ================ || api requests || =======================
-
+  
     // get all users
     const getUsers = async () => {
-        setLoading(true);
-        return await axios.get(`${url}Profile/AllUsers`);
+      setLoading(true);
+      try {
+        const response = await axios.get(`${url}Profile/AllUsers`);
+        setUsers(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
     };
+  
     useEffect(() => {
-        getUsers()
-            .then((res) => {
-                setUsers(res.data), setLoading(false);
-            })
-            .catch((err) => {
-                console.log(err);
-                setLoading(false);
-            });
-        return () => {};
+      getUsers();
+      return () => {};
     }, []);
+  
+    const handleUsernameFilterChange = (event) => {
+      setUsernameFilter(event.target.value);
+    };
+  
     return (
         <div>
-            <div className="dash-header">
-                <span>liste des utilisateurs</span>
-                <button onClick={() => setShow(true)}>ajouter utilisateur</button>
+          <div className="dash-header">
+            <span>liste des utilisateurs</span>
+            <div className="filterUsers-bar">
+              <label htmlFor="usernameFilter">Filter by username:</label>
+              <input
+                type="text"
+                id="usernameFilter"
+                value={usernameFilter}
+                onChange={handleUsernameFilterChange}
+                placeholder="Enter username"
+              />
             </div>
-            <div className="users-grid-data">
-                <div>
-                    <span>id</span>
-                    <span>name</span>
-                    <span>email</span>
-                    <span>télephone</span>
-                    <span>isAdmin</span>
-                    <span>contracted</span>
-                </div>
-                <div className="users-grid-body">
-                    {loading ? (
-                        <Spinner />
-                    ) : (
-                        <>
-                            {users?.map((user, idx) => (
-                                <div key={idx} onClick={() => navigate(`/dashboard/admin/users/${user.id}`)}>
-                                    <span>{user.id}</span>
-                                    <span>{user.userName}</span>
-                                    <span>{user.emailAddress}</span>
-                                    <span>{user.phoneNumber}</span>
-                                    <span>{trans(user.isAdmin)}</span>
-                                    <span>{trans(user.isContracted)}</span>
-                                </div>
+            <button onClick={() => setShow(true)}>ajouter utilisateur</button>
+          </div>
+          <div className="users-grid-data">
+            <div>
+              <span>id</span>
+              <span>name</span>
+              <span>email</span>
+              <span>télephone</span>
+              <span>isAdmin</span>
+              <span>contracted</span>
+            </div>
+            <div className="users-grid-body">
+              {loading ? (
+                <Spinner />
+              ) : (
+                <>
+                  {users
+                    .filter((user) => user.userName.toLowerCase().includes(usernameFilter.toLowerCase()))
+                    .map((user, idx) => (
+                      <div key={idx} onClick={() => navigate(`/dashboard/admin/users/${user.id}`)}>
+                        <span>{user.id}</span>
+                        <span>{user.userName}</span>
+                        <span>{user.emailAddress}</span>
+                        <span>{user.phoneNumber}</span>
+                        <span>{trans(user.isAdmin)}</span>
+                        <span>{trans(user.isContracted)}</span>
+                      </div>
                             ))}
                         </>
                     )}

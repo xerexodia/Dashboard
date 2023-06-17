@@ -13,6 +13,7 @@ import UserDetails from 'pages/AdminDash/UserDetails';
 import MachineDetails from 'pages/AdminDash/MachineDetails';
 import { element } from 'prop-types';
 import VisitDetails from 'pages/AdminDash/VisitDetails';
+import Notifications from '../pages/AdminDash/Notifications'
 
 // ==============================|| DASH ROUTING ||============================== //
 
@@ -45,6 +46,7 @@ const AdminDash = {
                                     path: 'visit/:id',
                                     element: <VisitDetails />
                                 }
+
                             ]
                         }
                     ]
@@ -66,6 +68,10 @@ const AdminDash = {
         {
             path: '/dashboard/admin/equipement',
             element: <Equipement />
+        },
+        {
+            path: '/dashboard/admin/Notifications',
+            element: <Notifications />
         }
     ]
 };

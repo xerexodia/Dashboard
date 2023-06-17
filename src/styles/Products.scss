@@ -1,0 +1,109 @@
+.containerProducts {
+    margin-top: 1.5rem;
+  }
+
+  .display-6 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .btn2 {
+    font-size: 1.2rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    margin-right: 0.5rem;
+    text-decoration: none;
+  }
+  
+  .btn1 {
+    font-size: 1.2rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    margin-right: 0.5rem;
+    text-decoration: none;
+  }
+  
+  .btn-outline-dark {
+    color: #343a40;
+    border-color: #343a40;
+  }
+  
+  .btn-outline-dark:hover {
+    color: #989494;
+    background-color: #343a40;
+    border-color: #343a40;
+  }
+  
+  .card {
+    border: none;
+    transition: transform 0.4s;
+    height: 100%;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-img-top {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+  }
+  
+  .card-body {
+    padding: 5rem;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    margin-top: -2rem;
+  }
+  
+  .btn1 {
+    font-size: 1.2rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    margin-top: 1rem;
+    
+  }
+  
+  .lead {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* Media Query for smaller screens */
+  @media (max-width: 768px) {
+    .display-6 {
+      font-size: 5rem;
+    }
+  
+    .card-img-top {
+      height: 300px;
+    }
+  
+    .card-title {
+      font-size: 1.3rem;
+    }
+  
+    .lead {
+      font-size: 1rem;
+    }
+  
+    .btn1 {
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+    }
+  }
+  

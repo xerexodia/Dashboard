@@ -36,75 +36,203 @@ const UserDetails = () => {
     const [user, setUser] = useState([]);
     const [machine, setMachines] = useState([]);
     const [informerModal, setInformerModal] = useState(false);
+    const [allarmerModal, setAllarmerModal] = useState(false);
     const [machineModal, setMachineModal] = useState(false);
     const [Loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = React.useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [file, setFile] = useState();
+    const [contracted, setContracted] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  
     const navigate = useNavigate();
-
+  
     // user id
     const { userId } = useParams();
+  
     const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
+      setShowPassword(!showPassword);
     };
-
+  
     const handleMouseDownPassword = (event) => {
-        event.preventDefault();
+      event.preventDefault();
     };
+  
     // ========================|| api calls || ================================//
+  
     const getUser = async () => {
-        setLoading(true);
-        return await axios.get(`${url}Profile/User/${userId}`);
+      setLoading(true);
+      try {
+        const response = await axios.get(`${url}Profile/User/${userId}`);
+        setUser(response.data);
+        setMachines(response.data.clientMachines);
+        setContracted(response.data.isContracted);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
     };
-
-    const deleteUser = async () => {
-        await axios.delete(`${url}Profile/User/${userId}`);
-        toast.success('user deleted successfully', {
-            autoClose: 2000
+  
+    const allarmer = async (values) => {
+      const payload = {
+        userId: user.id,
+        warningMessage: values.Message
+      };
+  
+      try {
+        const response = await axios.post(`${url}Alert/SendAlert`, payload);
+        console.log(response.data);
+        toast.success('User alarmed successfully', {
+          autoClose: 2000
         });
-        navigate(-1);
+        setAllarmerModal(false);
+      } catch (error) {
+        console.error('Error alarming user:', error);
+        toast.error('Failed to alarm user', {
+          autoClose: 2000
+        });
+      }
     };
+  
+    const deleteUser = async () => {
+      setShowDeleteConfirmation(true);
+    };
+  
+    const confirmDeleteUser = async () => {
+      await axios.delete(`${url}Profile/User/${userId}`);
+      toast.success('User deleted successfully', {
+        autoClose: 2000
+      });
+      navigate(-1);
+    };
+  
+    const cancelDeleteUser = () => {
+      setShowDeleteConfirmation(false);
+    };
+  
     const informer = async (values) => {
-        const formData = new FormData();
-        formData.append('Attachment', file);
-        formData.append('UserId', userId);
-        formData.append('Message', values.Message);
-        const data = await axios.post(`${url}MessageToCLient/SendMessageToClient`, formData);
-        console.log(data);
+      const formData = new FormData();
+      formData.append('Attachment', file);
+      formData.append('UserId', userId);
+      formData.append('Message', values.Message);
+      const data = await axios.post(`${url}MessageToCLient/SendMessageToClient`, formData);
+      console.log(data);
     };
-
+  
     useEffect(() => {
-        getUser()
-            .then((res) => {
-                setUser(res.data), setMachines(res.data.clientMachines), setLoading(false);
-            })
-            .catch((err) => {
-                console.log(err), setLoading(false);
-            });
+      getUser()
+        .then((res) => {
+          setUser(res.data);
+          setMachines(res.data.clientMachines);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
     }, []);
-
+  
     return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {Loading ? (
-                <Spinner />
-            ) : (
-                <>
-                    <ToastContainer />
-                    <div className="dash-header">
-                        <span>Utilisateur Détail</span>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {Loading ? (
+          <Spinner />
+        ) : (
+          <>
+            <ToastContainer />
+            <div className="dash-header">
+              <span>Utilisateur Détail</span>
+            </div>
+            <div className="userDetails-header">
+              <div>
+                <span>id: {user.id}</span>
+                <span>Name: {user.userName} </span>
+                <span>email: {user.emailAddress}</span>
+                <span>telephone: {user.phoneNumber} </span>
+                <span>contracted: {trans(user.isContracted)} </span>
+              </div>
+              <div>
+                <button onClick={() => setInformerModal(true)}>informer</button>
+                <button onClick={() => setUpdate(true)}>update</button>
+                <button onClick={deleteUser}>delete</button>
+                {contracted && <button onClick={() => setAllarmerModal(true)}>Allarmer</button>}
+                {/* Delete Confirmation Dialog */}
+                <Modal
+                  title="Confirm Delete"
+                  onClose={cancelDeleteUser}
+                  show={showDeleteConfirmation}
+                >
+                  <div>
+                    <p>Are you sure you want to delete this user?</p>
+                    <div>
+                      <button onClick={confirmDeleteUser}>Delete</button>
+                      <button onClick={cancelDeleteUser}>Cancel</button>
                     </div>
-                    <div className="userDetails-header">
-                        <div>
-                            <span>id: {user.id}</span>
-                            <span>email: {user.emailAddress}</span>
-                            <span>telephone: {user.phoneNumber} </span>
-                            <span>contracted: {trans(user.isContracted)} </span>
-                            <span>admin: {trans(user.isAdmin)} </span>
-                        </div>
-                        <div>
-                            <button onClick={() => setInformerModal(true)}>informer</button>
-                            <button onClick={() => setUpdate(true)}>update</button>
-                            <button onClick={deleteUser}>delete</button>
+                  </div>
+                </Modal>
+                <Modal
+                  title="Allarmer Utilisateur"
+                  onClose={() => setAllarmerModal(false)}
+                  show={allarmerModal}
+                >
+                  <Formik
+                    initialValues={{
+                      Message: ''
+                    }}
+                    onSubmit={(values) => allarmer(values)}
+                  >
+                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                      <form noValidate onSubmit={handleSubmit} style={{ padding: '20px 30px' }}>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12}>
+                            <Stack spacing={1}>
+                              <InputLabel htmlFor="message">Message</InputLabel>
+                              <OutlinedInput
+                                id="message"
+                                type="text"
+                                value={values.Message}
+                                name="Message"
+                                multiline
+                                maxRows={4}
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                placeholder="Enter message"
+                                fullWidth
+                                error={Boolean(touched.Message && errors.Message)}
+                              />
+                              {touched.Message && errors.Message && (
+                                <FormHelperText error id="standard-weight-helper-text-Message-login">
+                                  {errors.Message}
+                                </FormHelperText>
+                              )}
+                            </Stack>
+                          </Grid>
+  
+                          {errors.submit && (
+                            <Grid item xs={12}>
+                              <FormHelperText error>{errors.submit}</FormHelperText>
+                            </Grid>
+                          )}
+  
+                          <Grid item xs={12}>
+                            <AnimateButton>
+                              <Button
+                                disableElevation
+                                disabled={isSubmitting}
+                                fullWidth
+                                size="large"
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                              >
+                                Allarmer
+                              </Button>
+                            </AnimateButton>
+                          </Grid>
+                        </Grid>
+                      </form>
+                    )}
+                  </Formik>
+                </Modal>
                         </div>
                         <Modal title="informer utilisateur" onClose={() => setInformerModal(false)} show={informerModal}>
                             <Formik
@@ -199,7 +327,7 @@ const UserDetails = () => {
                                 }}
                                 onSubmit={async () => {
                                     try {
-                                        const data = await axios.patch(`${url}Profile/User/${userId}`);
+                                        const data = await axios.patch(`https://localhost:7104/api/Profile/User/${userId}`);
                                         if (data) {
                                             setUser(data.data);
                                             setUpdate(false);
@@ -246,11 +374,11 @@ const UserDetails = () => {
                                                         onChange={handleChange}
                                                         placeholder="Enter user name"
                                                         fullWidth
-                                                        error={Boolean(touched.email && errors.email)}
+                                                        error={Boolean(touched.userName && errors.userName)}
                                                     />
-                                                    {touched.email && errors.email && (
-                                                        <FormHelperText error id="standard-weight-helper-text-email-login">
-                                                            {errors.email}
+                                                    {touched.userName && errors.userName && (
+                                                        <FormHelperText error id="standard-weight-helper-text-userName-login">
+                                                            {errors.userName}
                                                         </FormHelperText>
                                                     )}
                                                 </Stack>
@@ -310,22 +438,7 @@ const UserDetails = () => {
                                                     )}
                                                 </Stack>
                                             </Grid>
-                                            <Grid item xs={12} sx={{ mt: -1 }}>
-                                                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-                                                    <FormControlLabel
-                                                        control={
-                                                            <Checkbox
-                                                                checked={values.isAdmin}
-                                                                onChange={handleChange}
-                                                                name="isAdmin"
-                                                                color="primary"
-                                                                size="small"
-                                                            />
-                                                        }
-                                                        label={<Typography variant="h6">Admin</Typography>}
-                                                    />
-                                                </Stack>
-                                            </Grid>
+                                            
                                             <Grid item xs={12} sx={{ mt: -1 }}>
                                                 <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                                                     <FormControlLabel

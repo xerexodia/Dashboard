@@ -1,0 +1,48 @@
+/* visitDetails.scss */
+
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .data-table thead th {
+    background-color: #f2f2f2;
+    padding: 10px;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  .data-table tbody td {
+    padding: 10px;
+  }
+  
+  .data-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .data-table tbody tr:hover {
+    background-color: #e6e6e6;
+  }
+  
+  .section-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .section-body {
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+  }
+  
+  .section-body table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .section-body td {
+    padding: 5px 10px;
+  }
+  

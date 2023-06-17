@@ -2,61 +2,125 @@ import React, { useEffect, useState } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { url } from 'constants/urls';
+
 const Visit = () => {
-    const [visits, setVisits] = useState([]);
+  const [visits, setVisits] = useState([]);
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+  const [visitToDelete, setVisitToDelete] = useState(null);
+  const [filterDate, setFilterDate] = useState('');
+  const [filterSerialNumber, setFilterSerialNumber] = useState('');
+  const [filteredVisits, setFilteredVisits] = useState([]);
 
-    const getVisits = async () => {
-        return axios.get(`${url}VisitDetails/AllVisits`);
-    };
-    const deleteVisit = async (id) => {
-        await axios.delete(`${url}VisitDetails/Visit/${id}`);
-        const filtred = visits.filter((item) => item.id !== id);
-        setVisits(filtred);
-    };
-    console.log(visits);
-    useEffect(() => {
-        getVisits()
-            .then((res) => setVisits(res.data))
-            .catch((err) => console.log(err));
+  const getVisits = async () => {
+    try {
+      const response = await axios.get(`${url}VisitDetails/AllVisits`);
+      setVisits(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-        return () => {};
-    }, []);
+  const deleteVisit = async (id) => {
+    await axios.delete(`${url}VisitDetails/Visit/${id}`);
+    const filtered = visits.filter((item) => item.id !== id);
+    setVisits(filtered);
+    setDeleteConfirmation(false);
+    setVisitToDelete(null);
+  };
 
-    return (
+  const filterVisits = () => {
+    const filteredVisits = visits.filter((visit) => {
+      const matchDate = visit.visitDate.includes(filterDate);
+      const matchSerialNumber = visit.machineSerialNumber.includes(filterSerialNumber);
+      return matchDate && matchSerialNumber;
+    });
+    setFilteredVisits(filteredVisits);
+  };
+
+  useEffect(() => {
+    getVisits();
+  }, []);
+
+  useEffect(() => {
+    filterVisits();
+  }, [filterDate, filterSerialNumber, visits]);
+
+  const handleDeleteConfirmation = (visit) => {
+    setDeleteConfirmation(true);
+    setVisitToDelete(visit);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmation(false);
+    setVisitToDelete(null);
+  };
+
+  return (
+    <div>
+      <div className="dash-header">
+        <span>Liste des visites</span>
+      </div>
+
+      {/* Filter Section */}
+      <div className="filter-section">
+        <input
+          type="text"
+          placeholder="Filter by visit date"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Filter by machine serial number"
+          value={filterSerialNumber}
+          onChange={(e) => setFilterSerialNumber(e.target.value)}
+        />
+      </div>
+
+      <div className="grid-data">
         <div>
-            <div className="dash-header">
-                <span>Liste des visites</span>
-            </div>
-            <div className="grid-data">
-                <div>
-                    <span>visite id</span>
-                    <span>machine id</span>
-                    <span>visit number</span>
-                    <span>visite date</span>
-                    <span>final state</span>
-                    <span>Action</span>
-                </div>
-                <div className="grid-body">
-                    {visits.length > 0 ? (
-                        visits.map((item, idx) => (
-                            <div key={idx}>
-                                <span>#{item.id}</span>
-                                <span>#{item.machineSerialNumber}</span>
-                                <span>#{item.visitNumber}</span>
-                                <span>{item.visitDate}</span>
-                                <span>{item.finalState}</span>
-                                <span>
-                                    <DeleteOutlined onClick={() => deleteVisit(item.id)} />
-                                </span>
-                            </div>
-                        ))
-                    ) : (
-                        <span>no visits yet</span>
-                    )}
-                </div>
-            </div>
+          <span>visite id</span>
+          <span>machine id</span>
+          <span>visit number</span>
+          <span>visite date</span>
+          <span>final state</span>
+          <span>Action</span>
         </div>
-    );
+        <div className="grid-body">
+          {filteredVisits.length > 0 ? (
+            filteredVisits.map((item, idx) => (
+              <div key={idx}>
+                <span>#{item.id}</span>
+                <span>#{item.machineSerialNumber}</span>
+                <span>#{item.visitNumber}</span>
+                <span>{item.visitDate}</span>
+                <span>{item.finalState}</span>
+                <span>
+                  <DeleteOutlined onClick={() => handleDeleteConfirmation(item)} />
+                </span>
+              </div>
+            ))
+          ) : (
+            <span>no visits yet</span>
+          )}
+        </div>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmation && visitToDelete && (
+        <div className="delete-confirmation-modal">
+          <div className="modal-content">
+            <h3>Confirmation</h3>
+            <p>Are you sure you want to delete the visit with ID #{visitToDelete.id}?</p>
+            <div className="modal-buttons">
+              <button onClick={() => deleteVisit(visitToDelete.id)}>Yes</button>
+              <button onClick={handleDeleteCancel}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Visit;

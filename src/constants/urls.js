@@ -1,1 +1,3 @@
-export const url = 'http://tmstestapi.somee.com/api/';
+export const url = 'http://tmsapp.somee.com/api/';
+
+export const base64 = 'data:image/jpeg;base64,';

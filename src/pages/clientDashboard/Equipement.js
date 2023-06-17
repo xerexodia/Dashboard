@@ -8,7 +8,7 @@ const Equipement = () => {
     const { user } = useStateContext();
     const [machines, setMachines] = useState([]);
     const getMachines = async () => {
-        return await axios.get(`${url}MyMachine/MyMachines?clientId=19`);
+        return await axios.get(`${url}MyMachine/MyMachines?clientId=7`);
     };
     useEffect(() => {
         getMachines()

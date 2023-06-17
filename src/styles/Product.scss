@@ -1,0 +1,54 @@
+.containerProduct {
+    margin-top: 100px; /* Adjust the top margin value to create space with the navbar */
+  }
+  
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .col-md-6 {
+    width: 50%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .img-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px; /* Adjust the height value as needed */
+    transition: transform 0.7s ease-in-out;
+    
+  }
+  .img-container:hover {
+    
+    transform: scale(1.2);
+    
+  }
+  
+  .img-fluid {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 5px;
+  }
+  
+
+  
+  .display-5 {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  
+//   .lead {
+//     font-size: 18px;
+//     color: #444;
+//     line-height: 1.6;
+//   }
+  
+  .my-5 {
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+  }
+  

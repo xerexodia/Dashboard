@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import 'styles/userDetails.scss';
 import 'styles/headerDash.scss';
 import 'styles/machineDetails.scss';
+
 import { useNavigate } from 'react-router-dom';
 import Modal from 'components/Modal';
 import { Formik } from 'formik';
@@ -35,10 +36,14 @@ const MachineDetails = () => {
     const [addVisitModal, setAddVisitModal] = React.useState(false);
     const [machine, setMachine] = useState({});
     const [visits, setVisits] = useState([]);
+    const [dateFilter, setDateFilter] = useState('');
+
     const [file, setFile] = useState();
     const inputRef = useRef();
     const navigate = useNavigate();
     const { machineId } = useParams();
+    
+
     const [visit, setVisit] = useState({
         VisitNumber: '',
         VisitDate: '',
@@ -52,8 +57,12 @@ const MachineDetails = () => {
         CmInvestigationFileNumber: '',
         CmRepaireType: '',
         CmInterventionFileNumber: '',
-        CmReturnDate: ''
+        CmReturnDate: '',
+        Attachment:'',
+        AttachmentName:''
     });
+    const { userId } = useParams();
+    const { serialNumber } = useParams();
     const getMachine = async () => {
         return await axios.get(`${url}Machine/${machineId}/visits`);
     };
@@ -67,13 +76,14 @@ const MachineDetails = () => {
             formData.append(el, values[el]);
         }
 
-        formData.append('Attachement', file);
+        formData.append('Attachment', file);
         formData.append('MachineSerialNumber', machine.serialNumber);
         formData.append('MachineType', machine.machineType);
 
         for (let el of formData) {
             console.log(el);
         }
+        
         const data = await axios.post(`${url}VisitDetails/AddVisit`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         console.log(data);
         setVisits((prev) => [...prev, data.data]);
@@ -85,7 +95,7 @@ const MachineDetails = () => {
             formData.append(el, values[el]);
         }
 
-        formData.append('Attachement', file);
+        formData.append('Attachment', file);
         formData.append('MachineSerialNumber', machine.serialNumber);
         formData.append('MachineType', machine.machineType);
 
@@ -96,6 +106,7 @@ const MachineDetails = () => {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
         console.log(data);
+        set
     };
     useEffect(() => {
         getMachine()
@@ -111,6 +122,15 @@ const MachineDetails = () => {
             setVisits([]);
         };
     }, [machineId]);
+    const filteredVisits = visits.filter((item) => {
+        if (dateFilter === '') {
+          return true; // No filter applied, include all visits
+        } else {
+          const formattedVisitDate = item.visitDate.toLowerCase(); // Adjust to match the format of your visit date
+          const formattedDateFilter = dateFilter.toLowerCase(); // Adjust to match the format of your date filter
+          return formattedVisitDate.includes(formattedDateFilter);
+        }
+      });
 
     return (
         <div>
@@ -143,18 +163,19 @@ const MachineDetails = () => {
                         delete
                     </button>
                     <Modal title="notifier utilisateur" onClose={() => setInformerModal(false)} show={informerModal}>
-                        <Formik
+                    <Formik
                             initialValues={{
                                 MachineState: '',
                                 Message: ''
                             }}
-                        >
+                            onSubmit={addNotif} ////////////
+                            >
                             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                                 <form noValidate onSubmit={handleSubmit} style={{ padding: '20px 30px' }}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={12}>
                                             <Stack spacing={1}>
-                                                <InputLabel id="demo-multiple-name-label">Etat de machiine</InputLabel>
+                                                <InputLabel id="demo-multiple-name-label">Etat de machine</InputLabel>
                                                 <Select
                                                     labelId="demo-multiple-name-label"
                                                     id="demo-multiple-name"
@@ -162,8 +183,12 @@ const MachineDetails = () => {
                                                     onChange={handleChange}
                                                     input={<OutlinedInput label="etat" name="MachineState" placeholder="sdqsd" />}
                                                 >
-                                                    <MenuItem value="finis">finis</MenuItem>
-                                                    <MenuItem value="en Progress">en cours</MenuItem>
+                                                    <MenuItem value="Réception de l'endoscope">Réception de l'endoscope</MenuItem>
+                                                    <MenuItem value="En cours d'investigation">En cours d'investigation</MenuItem>
+                                                    <MenuItem value="en cours d'entretien">en cours d'entretien</MenuItem>
+                                                    <MenuItem value="en cours de réparation">en cours de réparation</MenuItem>
+                                                    <MenuItem value="Endoscope réparé">Endoscope réparé</MenuItem>
+                                                    <MenuItem value="Livraison de l'endoscope">Livraison de l'endoscope</MenuItem>
                                                 </Select>
                                                 {touched.email && errors.email && (
                                                     <FormHelperText error id="standard-weight-helper-text-email-login">
@@ -201,7 +226,7 @@ const MachineDetails = () => {
                                                 <OutlinedInput
                                                     id="piece"
                                                     type="file"
-                                                    // value={values.piece}
+                                                    value={values.Attachment}
                                                     name="piece"
                                                     onBlur={handleBlur}
                                                     onChange={(e) => setFile(e.target.files[0])}
@@ -246,7 +271,7 @@ const MachineDetails = () => {
                 </div>
             </div>
             <div className="dash-header">
-                <span>liste visite</span>
+                <span>liste visites</span>
                 <button onClick={() => setAddVisitModal(true)}>ajouter</button>
                 <Modal title="add visit" onClose={() => setAddVisitModal(false)} show={addVisitModal}>
                     <Formik initialValues={visit} onSubmit={(values) => addVisit(values)}>
@@ -306,7 +331,7 @@ const MachineDetails = () => {
                                                 value={values.RepaireType}
                                                 name="RepaireType"
                                                 onChange={handleChange}
-                                                input={<OutlinedInput label="repairType" name="repairType" placeholder="sdqsd" />}
+                                                input={<OutlinedInput label="repaireType" name="repaireType" placeholder="sdqsd" />}
                                             >
                                                 <MenuItem value="finis">finis</MenuItem>
                                                 <MenuItem value="en Progress">en cours</MenuItem>
@@ -471,7 +496,7 @@ const MachineDetails = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <InputLabel htmlFor="message">cmRepairType</InputLabel>
+                                                    <InputLabel htmlFor="message">cmRepaireType</InputLabel>
                                                     <OutlinedInput
                                                         id="cmRepairType"
                                                         type="text"
@@ -540,17 +565,19 @@ const MachineDetails = () => {
                                         <Stack>
                                             <InputLabel htmlFor="piece">piece jointe</InputLabel>
                                             <OutlinedInput
-                                                ref={inputRef}
-                                                id="piece"
-                                                type="file"
-                                                value={values.Attachment}
-                                                name="Attachment"
-                                                onBlur={handleBlur}
-                                                onChange={(e) => setFile(e.target.files[0])}
-                                                placeholder="Attachment jointe"
-                                                fullWidth
-                                                error={Boolean(touched.Attachment && errors.Attachment)}
+                                            ref={inputRef}
+                                            id="piece"
+                                            type="file"
+                                            value={values.Attachment}
+                                            name="Attachment"
+                                            onBlur={handleBlur}
+                                            onChange={(e) => setFile(e.target.files[0])} // Update this line
+                                            placeholder="Attachment jointe"
+                                            fullWidth
+                                            error={Boolean(touched.Attachment && errors.Attachment)}
                                             />
+
+
                                             {touched.Attachment && errors.Attachment && (
                                                 <FormHelperText error id="standard-weight-helper-text-Attachment-login">
                                                     {errors.Attachment}
@@ -586,32 +613,55 @@ const MachineDetails = () => {
                     </Formik>
                 </Modal>
             </div>
+            <div>
+            <Stack direction="row" spacing={2} alignItems="center">
+                <InputLabel>Date Filter:</InputLabel>
+                <OutlinedInput
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                placeholder="Enter visit date"
+                endAdornment={
+                    <InputAdornment position="end">
+                    <IconButton onClick={() => setDateFilter('')} edge="end">
+                        X
+                    </IconButton>
+                    </InputAdornment>
+                }
+                />
+            </Stack>
             <div className="users-grid-data">
                 <div>
-                    <span>id</span>
-                    <span>final state</span>
-                    <span>RepaireType</span>
-                    <span>visit date</span>
-                </div>
-                <div className="users-grid-body">
-                    {visits.length > 0 ? (
-                        visits.map((item, idx) => (
-                            <div
-                                key={idx}
-                                onClick={() => navigate(`/dashboard/admin/users/qsdsddqqsdsd/machine/qsdqsdqsd/visit/${item.id}`)}
-                            >
-                                <span>#{item.id}</span>
-                                <span>{item.finalState}</span>
-                                <span>#{item.repaireType}</span>
-                                <span>{item.visitDate}</span>
-                            </div>
-                        ))
-                    ) : (
-                        <span>machine have not visits yet</span>
-                    )}
+                <span>id</span>
+                <span>final state</span>
+                <span>RepaireType</span>
+                <span>visit date</span>
                 </div>
             </div>
-        </div>
+            <div className="users-grid-body">
+                {filteredVisits.length > 0 ? (
+                filteredVisits.map((item, idx) => (
+                    <div
+                    key={idx}
+                    onClick={() =>
+                        navigate(
+                        `/dashboard/admin/users/${userId}/machine/${serialNumber}/visit/${item.id}`
+                        )
+                    }
+                    >
+                    <span>#{item.id}</span>
+                    <span>{item.finalState}</span>
+                    <span>#{item.repaireType}</span>
+                    <span>{item.visitDate}</span>
+                    </div>
+                ))
+                ) : (
+                <span>No visits found with the specified date filter.</span>
+                )}
+            </div>
+            </div>
+
+            </div>
+
     );
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'styles/userDetails.scss';
 import 'styles/headerDash.scss';
+import 'styles/Equipement.scss';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'components/Modal';
@@ -206,33 +207,37 @@ const Equipement = () => {
                 </Modal>
             </div>
             <div className="grid-data">
-                <div>
-                    <span>id</span>
-                    <span>title</span>
-                    <span>description</span>
-                    <span>category</span>
-                    <span>Action</span>
-                </div>
-                <div className="grid-body">
-                    {loading ? (
+                    <div>
+                        <span>id</span>
+                        <span>title</span>
+                        <span>description</span>
+                        <span>category</span>
+                        <span>Action</span>
+                    </div>
+                    <div className="grid-body">
+                        {loading ? (
                         <Spinner />
-                    ) : data.length < 0 ? (
-                        <span>no euipement to display for now</span>
-                    ) : (
+                        ) : data.length < 1 ? (
+                        <span>No equipment to display at the moment.</span>
+                        ) : (
                         data.map((item, idx) => (
                             <div key={idx}>
-                                <span>#{item.id}</span>
-                                <span>{item.title}</span>
-                                <span>{item.description}</span>
-                                <span>{item.category}</span>
-                                <span>
-                                    <DeleteOutlined
-                                        onClick={async () => {
-                                            await axios.delete(`${url}GalleryMachine/Gallery/${item.id}`);
-                                            setData(data.filter((x) => x.id !== item.id));
-                                        }}
-                                    />
-                                </span>
+                            <span>#{item.id}</span>
+                            <span>{item.title}</span>
+                            <span className="description">
+                                {item.description.length > 3
+                                ? item.description.split(' ').slice(0, 3).join(' ') + '...'
+                                : item.description}
+                            </span>
+                            <span>{item.category}</span>
+                            <span>
+                                <DeleteOutlined
+                                onClick={async () => {
+                                    await axios.delete(`${url}GalleryMachine/Gallery/${item.id}`);
+                                    setData(data.filter((x) => x.id !== item.id));
+                                }}
+                                />
+                            </span>
                             </div>
                         ))
                     )}

@@ -1,35 +1,63 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
-import { Box, ButtonBase, MenuItem, Stack } from '../../../node_modules/@mui/material/index';
-import NavItem from 'layout/DashLayout/Drawer/DrawerContent/Navigation/NavItem';
-import { NavLink } from '../../../node_modules/react-router-dom/dist/index';
+import { Outlet, NavLink } from 'react-router-dom';
 import 'styles/mainNavBar.scss';
 import { useStateContext } from 'context/authContext';
 import Profile from 'layout/DashLayout/Header/HeaderContent/Profile/index';
+
 const MainLayout = () => {
-    const { user } = useStateContext();
-    return (
-        <>
-            <div className="navBarContainer">
-                <div>
-                    <NavLink to={''}>TMS</NavLink>
-                    <div>
-                        <NavLink to={'/Products'}>Produits</NavLink>
-                        <NavLink to={'/About'}>A propos nous</NavLink>
-                        <NavLink to={'/contact'}>Contacter-nous</NavLink>
-                    </div>
-                    {user ? (
-                        <Profile />
-                    ) : (
-                        <NavLink className="auth" to={'/login'}>
-                            login
-                        </NavLink>
-                    )}
-                </div>
+  const { user } = useStateContext();
+
+  return (
+    <>
+      <nav className="navbar navbar-expand-lg navbar-light bg-white py-0 shadow-sm smaller-navbar">
+        <div className="containerNavbar">
+          <div className="navbar-brand">
+            <img src="logo1.png" alt="Logo1" width="400" height="300" />
+            <div className="logo-text">
+              <div>Technologies Medicales et Scientifiques</div>
+              <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;التقنيات الطبية و العلمية&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
             </div>
-            <Outlet />
-        </>
-    );
+          </div>
+
+          <ul className="navbar-nav mx-auto"> {/* Use mx-auto to center align the nav links */}
+            <li className="nav-item">
+              <NavLink className="nav-link" exact to="/">
+                Accueil
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/Products">
+                Produits
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/About">
+                À propos
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/Contact">
+                Contact
+              </NavLink>
+            </li>
+          </ul>
+
+          <ul className="navbar-nav ml-auto">
+            <li className="nav-item">
+              {user ? (
+                <Profile />
+              ) : (
+                <NavLink className="auth" to="/login">
+                  Se connecter
+                </NavLink>
+              )}
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <Outlet />
+    </>
+  );
 };
 
 export default MainLayout;

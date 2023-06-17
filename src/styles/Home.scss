@@ -1,0 +1,115 @@
+.Home {
+  position: relative;
+}
+
+.card {
+  position: relative;
+}
+
+.cardHome {
+  border: none;
+  transition: transform 0.8s;
+  height: 100%;
+  z-index: 1; /* Ensure the dropped item is above the photo */
+}
+
+.cardHome:hover {
+  transform: translateY(5px);
+}
+
+.card-img {
+  object-fit: cover;
+}
+
+.card-titleHome {
+  font-size: 4rem;
+}
+
+.container1 {
+  margin-top: 5rem;
+}
+
+.card1-img-top,
+.card2-img-top {
+  transition: transform 0.7s ease-in-out; /* Add transition for smooth effect */
+}
+
+.card1-img-top:hover,
+.card2-img-top:hover {
+  transform: scale(1.4); /* Increase the scale to make the image slightly bigger */
+}
+
+.card-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 5rem;
+  background-color: rgba(0, 0, 0, 0.329);
+  color: #fff;
+}
+
+.container1 {
+  margin-top: 5rem;
+}
+
+.cardISO .card-title {
+  color: #333; /* Change the title color */
+  padding-right: 0px; /* Add right padding to move the title slightly to the left */
+  margin-top: 2rem;
+}
+
+.cardPolitique .card-title {
+  color: #333; /* Change the title color */
+  padding-right: 28px; /* Add left padding to move the title slightly to the right */
+  margin-top: 2rem;
+}
+
+.cardPolitique,
+.cardISO {
+  border: 0.5px solid #f0eeee; /* Add a 1px solid border */
+  border-radius: 20px; /* Add border radius for a rounded look */
+  padding: 10px; /* Add some padding inside the card */
+}
+
+.card-img-top {
+  height: 600px;
+  object-fit: cover;
+  width: 600px;
+  object-fit: cover;
+}
+
+.card-body {
+  text-align: left;
+}
+
+.card-textHome {
+  color: white;
+  font-size: 3rem;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+  .card-img-top {
+    height: 400px;
+    width: 200%;
+  }
+}
+
+/* Custom positioning for the two images */
+.card1-img-top:nth-child(1) {
+  position: relative;
+  right: 190px;
+  left: 130px;
+}
+
+.card2-img-top:nth-child(1) {
+  position: relative;
+  left: 140px;
+  right: 200px;
+}
