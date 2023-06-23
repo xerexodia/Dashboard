@@ -38,7 +38,7 @@ const Home = () => {
               />
               <div className="cardPolitique-body">
                 <h5 className="card-title">Politique qualité</h5>
-                <p className="card-text">dffdgdgf fd fdfgdfdg fdgf dgfdg fdg fdg fdfd fdg fg dfg dffdgfgd</p>
+                <p className="card-text">La politique qualité est une des politiques de l'entreprise. Elle définit les orientations que souhaite prendre la Direction en matière de qualité : les axes prioritaires pour assurer ou améliorer la qualité des produits ou services vendus, l'efficacité des processus internes</p>
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@ const Home = () => {
               />
               <div className="cardISO-body">
                 <h5 className="card-title">Politique qualité</h5>
-                <p className="card-text">sdfsfd sfdsdf sdf sdf </p>
+                <p className="card-text">La politique qualité est une des politiques de l'entreprise. Elle définit les orientations que souhaite prendre la Direction en matière de qualité : les axes prioritaires pour assurer ou améliorer la qualité des produits ou services vendus, l'efficacité des processus internes </p>
               </div>
             </div>
           </div>

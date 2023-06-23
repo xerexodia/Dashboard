@@ -18,7 +18,7 @@ const ResponseForm = ({ requestId, onSubmit }) => (
     {({ values, handleChange, setFieldValue }) => (
       <Form>
         <div>
-          <label htmlFor="response">Response:</label>
+          <label htmlFor="response">reponse :</label>
           <Field
             as="textarea"
             id="response"
@@ -27,7 +27,7 @@ const ResponseForm = ({ requestId, onSubmit }) => (
             onChange={handleChange}
           />
 
-          <label htmlFor="attachment">Attachment:</label>
+          <label htmlFor="attachment">file :</label>
           <input
             type="file"
             id="attachment"
@@ -36,7 +36,7 @@ const ResponseForm = ({ requestId, onSubmit }) => (
           />
         </div>
 
-        <button type="submit">Submit</button>
+        <button type="submit">Send</button>
       </Form>
     )}
   </Formik>
@@ -142,7 +142,7 @@ const InfoClient = () => {
           onChange={handleDateFilterChange}
         />
 
-        <label htmlFor="usernameFilter">client name :</label>
+        <label htmlFor="usernameFilter">Non de client :</label>
         <input
           type="text"
           id="usernameFilter"
@@ -156,7 +156,7 @@ const InfoClient = () => {
         {filteredRequests.length === 0 ? (
           <span>No matching requests found.</span>
         ) : (
-          filteredRequests.map((request) => (
+          filteredRequests.reverse().map((request) => (
             <div className="msg-box" key={request.id}>
               <div className="msg">
                 <span>Client : {request.user && request.user.userName}</span>

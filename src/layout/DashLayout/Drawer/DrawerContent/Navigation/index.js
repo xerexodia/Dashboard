@@ -5,12 +5,16 @@ import { Box, Typography } from '@mui/material';
 import NavGroup from './NavGroup';
 import menuItem from 'menu-items';
 import { useStateContext } from 'context/authContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
 const Navigation = () => {
     const { user } = useStateContext();
+    
+    
+
+   
 
     const navGroups = menuItem[user.isAdmin].map((item) => {
         switch (item.type) {

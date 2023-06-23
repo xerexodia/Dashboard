@@ -74,7 +74,7 @@ const Users = () => {
           <div className="dash-header">
             <span>liste des utilisateurs</span>
             <div className="filterUsers-bar">
-              <label htmlFor="usernameFilter">Filter by username:</label>
+              <label htmlFor="usernameFilter">Filter avec nom:</label>
               <input
                 type="text"
                 id="usernameFilter"
@@ -87,12 +87,12 @@ const Users = () => {
           </div>
           <div className="users-grid-data">
             <div>
-              <span>id</span>
-              <span>name</span>
-              <span>email</span>
+              <span>Id</span>
+              <span>Nom</span>
+              <span>Adresse email</span>
               <span>télephone</span>
-              <span>isAdmin</span>
-              <span>contracted</span>
+              <span>Admin</span>
+              <span>contracté</span>
             </div>
             <div className="users-grid-body">
               {loading ? (
@@ -158,7 +158,7 @@ const Users = () => {
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                                        <InputLabel htmlFor="email-login"> Addresse email</InputLabel>
                                         <OutlinedInput
                                             id="email-login"
                                             type="email"
@@ -179,7 +179,7 @@ const Users = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="user-name">User Name</InputLabel>
+                                        <InputLabel htmlFor="user-name">Nom</InputLabel>
                                         <OutlinedInput
                                             id="email-login"
                                             type="text"
@@ -200,7 +200,7 @@ const Users = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="email-login">telephone</InputLabel>
+                                        <InputLabel htmlFor="email-login">téléphone</InputLabel>
                                         <OutlinedInput
                                             id="email-login"
                                             type="text"
@@ -221,7 +221,7 @@ const Users = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="password-login">Password</InputLabel>
+                                        <InputLabel htmlFor="password-login">mot de passe</InputLabel>
                                         <OutlinedInput
                                             fullWidth
                                             error={Boolean(touched.password && errors.password)}
@@ -281,7 +281,7 @@ const Users = () => {
                                                     size="small"
                                                 />
                                             }
-                                            label={<Typography variant="h6">isContracted</Typography>}
+                                            label={<Typography variant="h6">Contracté</Typography>}
                                         />
                                     </Stack>
                                 </Grid>

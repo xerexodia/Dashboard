@@ -81,14 +81,14 @@ const Visit = () => {
         <div>
           <span>visite id</span>
           <span>machine id</span>
-          <span>visit number</span>
-          <span>visite date</span>
-          <span>final state</span>
+          <span>numéro visite</span>
+          <span>date visite </span>
+          <span>état final</span>
           <span>Action</span>
         </div>
         <div className="grid-body">
           {filteredVisits.length > 0 ? (
-            filteredVisits.map((item, idx) => (
+            filteredVisits.reverse().map((item, idx) => (
               <div key={idx}>
                 <span>#{item.id}</span>
                 <span>#{item.machineSerialNumber}</span>
@@ -111,7 +111,7 @@ const Visit = () => {
         <div className="delete-confirmation-modal">
           <div className="modal-content">
             <h3>Confirmation</h3>
-            <p>Are you sure you want to delete the visit with ID #{visitToDelete.id}?</p>
+            <p>Êtes-vous sûr de vouloir supprimer la visite avec ce ID#{visitToDelete.id}?</p>
             <div className="modal-buttons">
               <button onClick={() => deleteVisit(visitToDelete.id)}>Yes</button>
               <button onClick={handleDeleteCancel}>No</button>

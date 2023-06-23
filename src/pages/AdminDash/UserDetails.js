@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import 'styles/userDetails.scss';
 import 'styles/headerDash.scss';
 
+
 import { useNavigate, useParams } from 'react-router-dom';
 import Modal from 'components/Modal';
 import { Formik } from 'formik';
@@ -111,12 +112,27 @@ const UserDetails = () => {
     };
   
     const informer = async (values) => {
+        try{
       const formData = new FormData();
       formData.append('Attachment', file);
       formData.append('UserId', userId);
       formData.append('Message', values.Message);
       const data = await axios.post(`${url}MessageToCLient/SendMessageToClient`, formData);
       console.log(data);
+
+
+      
+    
+        toast.success('User informed successfully', {
+          autoClose: 2000
+        });
+        setInformerModal(false);
+      } catch (error) {
+        console.error('Error informing user:', error);
+        toast.error('Failed to inform user', {
+          autoClose: 2000
+        });
+      }
     };
   
     useEffect(() => {
@@ -140,20 +156,20 @@ const UserDetails = () => {
           <>
             <ToastContainer />
             <div className="dash-header">
-              <span>Utilisateur Détail</span>
+              <span>Détails d'utilisateur : </span>
             </div>
             <div className="userDetails-header">
               <div>
                 <span>id: {user.id}</span>
-                <span>Name: {user.userName} </span>
-                <span>email: {user.emailAddress}</span>
-                <span>telephone: {user.phoneNumber} </span>
-                <span>contracted: {trans(user.isContracted)} </span>
+                <span>nom : {user.userName} </span>
+                <span>adresse email: {user.emailAddress}</span>
+                <span>téléphone: {user.phoneNumber} </span>
+                <span>contracté: {trans(user.isContracted)} </span>
               </div>
               <div>
                 <button onClick={() => setInformerModal(true)}>informer</button>
-                <button onClick={() => setUpdate(true)}>update</button>
-                <button onClick={deleteUser}>delete</button>
+                <button onClick={() => setUpdate(true)}>modifier</button>
+                <button onClick={deleteUser}>supprimer</button>
                 {contracted && <button onClick={() => setAllarmerModal(true)}>Allarmer</button>}
                 {/* Delete Confirmation Dialog */}
                 <Modal
@@ -162,10 +178,10 @@ const UserDetails = () => {
                   show={showDeleteConfirmation}
                 >
                   <div>
-                    <p>Are you sure you want to delete this user?</p>
+                    <p>Voulez-vous vraiment supprimer ce utilisateur ?</p>
                     <div>
-                      <button onClick={confirmDeleteUser}>Delete</button>
-                      <button onClick={cancelDeleteUser}>Cancel</button>
+                      <button onClick={confirmDeleteUser}>Oui</button>
+                      <button onClick={cancelDeleteUser}>nom</button>
                     </div>
                   </div>
                 </Modal>
@@ -269,7 +285,7 @@ const UserDetails = () => {
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Stack spacing={1}>
-                                                    <InputLabel htmlFor="piece">Piece lointe</InputLabel>
+                                                    <InputLabel htmlFor="piece">Piece jointe</InputLabel>
                                                     <OutlinedInput
                                                         id="piece"
                                                         type="file"
@@ -316,171 +332,199 @@ const UserDetails = () => {
                             </Formik>
                         </Modal>
                         <Modal title="modifier utilisateur" onClose={() => setUpdate(false)} show={update}>
-                            <Formik
-                                initialValues={{
-                                    userName: user.userName,
-                                    password: '',
-                                    emailAddress: user.emailAddress,
-                                    phoneNumber: user.phoneNumber,
-                                    isAdmin: Boolean(user.isAdmin),
-                                    isContracted: Boolean(user.isContracted)
-                                }}
-                                onSubmit={async () => {
-                                    try {
-                                        const data = await axios.patch(`https://localhost:7104/api/Profile/User/${userId}`);
-                                        if (data) {
-                                            setUser(data.data);
-                                            setUpdate(false);
-                                            toast.success('user updated successfully');
-                                        }
-                                    } catch (error) {
-                                        console.log(error);
-                                    }
-                                }}
-                            >
-                                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-                                    <form noValidate onSubmit={handleSubmit} style={{ padding: '20px 30px' }}>
-                                        <Grid container spacing={3}>
-                                            <Grid item xs={12}>
-                                                <Stack spacing={1}>
-                                                    <InputLabel htmlFor="email-login">Email Address</InputLabel>
-                                                    <OutlinedInput
-                                                        id="email-login"
-                                                        type="email"
-                                                        value={values.emailAddress}
-                                                        name="emailAddress"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        placeholder="Enter emailAddress address"
-                                                        fullWidth
-                                                        error={Boolean(touched.emailAddress && errors.emailAddress)}
-                                                    />
-                                                    {touched.emailAddress && errors.emailAddress && (
-                                                        <FormHelperText error id="standard-weight-helper-text-emailAddress-login">
-                                                            {errors.emailAddress}
-                                                        </FormHelperText>
-                                                    )}
-                                                </Stack>
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <Stack spacing={1}>
-                                                    <InputLabel htmlFor="user-name">User Name</InputLabel>
-                                                    <OutlinedInput
-                                                        id="email-login"
-                                                        type="text"
-                                                        value={values.userName}
-                                                        name="userName"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        placeholder="Enter user name"
-                                                        fullWidth
-                                                        error={Boolean(touched.userName && errors.userName)}
-                                                    />
-                                                    {touched.userName && errors.userName && (
-                                                        <FormHelperText error id="standard-weight-helper-text-userName-login">
-                                                            {errors.userName}
-                                                        </FormHelperText>
-                                                    )}
-                                                </Stack>
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <Stack spacing={1}>
-                                                    <InputLabel htmlFor="email-login">telephone</InputLabel>
-                                                    <OutlinedInput
-                                                        id="email-login"
-                                                        type="text"
-                                                        value={values.phoneNumber}
-                                                        name="phoneNumber"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        placeholder="Enter phone number"
-                                                        fullWidth
-                                                        error={Boolean(touched.phoneNumber && errors.phoneNumber)}
-                                                    />
-                                                    {touched.phoneNumber && errors.phoneNumber && (
-                                                        <FormHelperText error id="standard-weight-helper-text-phoneNumber-login">
-                                                            {errors.phoneNumber}
-                                                        </FormHelperText>
-                                                    )}
-                                                </Stack>
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <Stack spacing={1}>
-                                                    <InputLabel htmlFor="password-login">Password</InputLabel>
-                                                    <OutlinedInput
-                                                        fullWidth
-                                                        error={Boolean(touched.password && errors.password)}
-                                                        id="-password-login"
-                                                        type={showPassword ? 'text' : 'password'}
-                                                        value={values.password}
-                                                        name="password"
-                                                        onBlur={handleBlur}
-                                                        onChange={handleChange}
-                                                        endAdornment={
-                                                            <InputAdornment position="end">
-                                                                <IconButton
-                                                                    aria-label="toggle password visibility"
-                                                                    onClick={handleClickShowPassword}
-                                                                    onMouseDown={handleMouseDownPassword}
-                                                                    edge="end"
-                                                                    size="large"
-                                                                >
-                                                                    {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                                                                </IconButton>
-                                                            </InputAdornment>
-                                                        }
-                                                        placeholder="Enter password"
-                                                    />
-                                                    {touched.password && errors.password && (
-                                                        <FormHelperText error id="standard-weight-helper-text-password-login">
-                                                            {errors.password}
-                                                        </FormHelperText>
-                                                    )}
-                                                </Stack>
-                                            </Grid>
-                                            
-                                            <Grid item xs={12} sx={{ mt: -1 }}>
-                                                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-                                                    <FormControlLabel
-                                                        control={
-                                                            <Checkbox
-                                                                checked={values.isContracted}
-                                                                onChange={handleChange}
-                                                                name="isContracted"
-                                                                color="primary"
-                                                                size="small"
-                                                            />
-                                                        }
-                                                        label={<Typography variant="h6">contracted</Typography>}
-                                                    />
-                                                </Stack>
-                                            </Grid>
-                                            {errors.submit && (
-                                                <Grid item xs={12}>
-                                                    <FormHelperText error>{errors.submit}</FormHelperText>
-                                                </Grid>
-                                            )}
+  <Formik
+    initialValues={{
+      userName: '',
+      password: '',
+      emailAddress: '',
+      phoneNumber: '',
+      isAdmin: '',
+      isContracted: Boolean(user.isContracted),
+    }}
+    onSubmit={async (values) => {
+      const updatedData = { id: userId };
 
-                                            <Grid item xs={12}>
-                                                <AnimateButton>
-                                                    <Button
-                                                        disableElevation
-                                                        disabled={isSubmitting}
-                                                        fullWidth
-                                                        size="large"
-                                                        type="submit"
-                                                        variant="contained"
-                                                        color="primary"
-                                                    >
-                                                        modifier
-                                                    </Button>
-                                                </AnimateButton>
-                                            </Grid>
-                                        </Grid>
-                                    </form>
-                                )}
-                            </Formik>
-                        </Modal>
+      if (values.emailAddress) {
+        updatedData.emailAddress = values.emailAddress;
+      }
+
+      if (values.userName) {
+        updatedData.userName = values.userName;
+      }
+
+      if (values.phoneNumber) {
+        updatedData.phoneNumber = values.phoneNumber;
+      }
+
+      if (values.password) {
+        updatedData.password = values.password;
+      }
+      
+      updatedData.isContracted = values.isContracted ? 1 : 0; // Add this line to set isContracted as an integer
+
+
+      try {
+        const { data } = await axios.patch(`${url}Profile/User/${userId}`, updatedData, {
+          headers: {
+            'Content-Type': 'application/json-patch+json',
+            Accept: '*/*',
+          },
+        });
+
+        toast.success('User updated successfully', {
+          autoClose: 2000
+        });
+        setUpdate(false);
+      } catch (error) {
+        console.error('Error updating user:', error);
+        toast.error('Failed to update user', {
+          autoClose: 2000
+        });
+      }
+    }}
+  >
+    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+      <form noValidate onSubmit={handleSubmit} style={{ padding: '20px 30px' }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Stack spacing={1}>
+              <InputLabel htmlFor="email-login">Email Address</InputLabel>
+              <OutlinedInput
+                id="email-login"
+                type="email"
+                value={values.emailAddress}
+                name="emailAddress"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                placeholder="Enter email address"
+                fullWidth
+                error={Boolean(touched.emailAddress && errors.emailAddress)}
+              />
+              {touched.emailAddress && errors.emailAddress && (
+                <FormHelperText error id="standard-weight-helper-text-emailAddress-login">
+                  {errors.emailAddress}
+                </FormHelperText>
+              )}
+            </Stack>
+          </Grid>
+          <Grid item xs={12}>
+            <Stack spacing={1}>
+              <InputLabel htmlFor="user-name">nom</InputLabel>
+              <OutlinedInput
+                id="user-name"
+                type="text"
+                value={values.userName}
+                name="userName"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                placeholder="Enter user name"
+                fullWidth
+                error={Boolean(touched.userName && errors.userName)}
+              />
+              {touched.userName && errors.userName && (
+                <FormHelperText error id="standard-weight-helper-text-userName-login">
+                  {errors.userName}
+                </FormHelperText>
+              )}
+            </Stack>
+          </Grid>
+          <Grid item xs={12}>
+            <Stack spacing={1}>
+              <InputLabel htmlFor="phone-number">Téléphone</InputLabel>
+              <OutlinedInput
+                id="phone-number"
+                type="text"
+                value={values.phoneNumber}
+                name="phoneNumber"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                placeholder="Enter phone number"
+                fullWidth
+                error={Boolean(touched.phoneNumber && errors.phoneNumber)}
+              />
+              {touched.phoneNumber && errors.phoneNumber && (
+                <FormHelperText error id="standard-weight-helper-text-phoneNumber-login">
+                  {errors.phoneNumber}
+                </FormHelperText>
+              )}
+            </Stack>
+          </Grid>
+          <Grid item xs={12}>
+            <Stack spacing={1}>
+              <InputLabel htmlFor="password-login">Mot de passe</InputLabel>
+              <OutlinedInput
+                fullWidth
+                error={Boolean(touched.password && errors.password)}
+                id="password-login"
+                type={showPassword ? 'text' : 'password'}
+                value={values.password}
+                name="password"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      size="large"
+                    >
+                      {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                placeholder="Enter password"
+              />
+              {touched.password && errors.password && (
+                <FormHelperText error id="standard-weight-helper-text-password-login">
+                  {errors.password}
+                </FormHelperText>
+              )}
+            </Stack>
+          </Grid>
+          <Grid item xs={12} sx={{ mt: -1 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={values.isContracted}
+                    onChange={handleChange}
+                    name="isContracted"
+                    color="primary"
+                    size="small"
+                  />
+                }
+                label={<Typography variant="h6">Contracté</Typography>}
+              />
+            </Stack>
+          </Grid>
+          {errors.submit && (
+            <Grid item xs={12}>
+              <FormHelperText error>{errors.submit}</FormHelperText>
+            </Grid>
+          )}
+
+          <Grid item xs={12}>
+            <Button
+              disableElevation
+              disabled={isSubmitting}
+              fullWidth
+              size="large"
+              type="submit"
+              variant="contained"
+              color="primary"
+            >
+              Modifier
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    )}
+  </Formik>
+</Modal>
+
+
                     </div>
                     <div className="dash-header">
                         <span>liste des machines</span>
@@ -513,7 +557,7 @@ const UserDetails = () => {
                                         <Grid container spacing={3}>
                                             <Grid item xs={12}>
                                                 <Stack spacing={1}>
-                                                    <InputLabel htmlFor="serialNumber">Serial number</InputLabel>
+                                                    <InputLabel htmlFor="serialNumber">numéro de serie</InputLabel>
                                                     <OutlinedInput
                                                         id="serialNumber"
                                                         type="text"
@@ -555,7 +599,7 @@ const UserDetails = () => {
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Stack spacing={1}>
-                                                    <InputLabel htmlFor="sellDate">Sale date</InputLabel>
+                                                    <InputLabel htmlFor="sellDate">date de vente</InputLabel>
                                                     <OutlinedInput
                                                         id="sellDate"
                                                         type="text"
@@ -604,10 +648,10 @@ const UserDetails = () => {
                     </div>
                     <div className="users-grid-data">
                         <div>
-                            <span>serial number</span>
+                            <span>numéro de serie</span>
                             <span>machine type</span>
                             <span>clientId</span>
-                            <span>sale date</span>
+                            <span> date de vente</span>
                         </div>
                         <div className="users-grid-body">
                             {machine.length > 0 ? (

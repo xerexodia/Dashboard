@@ -6,14 +6,26 @@ import { Box, List, Typography } from '@mui/material';
 
 // project import
 import NavItem from './NavItem';
+import { useEffect, useState } from 'react';
+import { useStateContext } from 'context/authContext';
 
 // ==============================|| NAVIGATION - LIST GROUP ||============================== //
 
 const NavGroup = ({ item }) => {
     const menu = useSelector((state) => state.menu);
     const { drawerOpen } = menu;
+    const { user } = useStateContext();
+    const [list, setList] = useState();
 
-    const navCollapse = item.children?.map((menuItem) => {
+    useEffect(() => {
+        if (!user.isAdmin && user.isContracted) {
+            setList(item.children?.filter((x) => x.id !== 'visit'));
+        }
+        else {
+        setList(item.children)
+        }
+    }, []);
+    const navCollapse = list?.map((menuItem) => {
         switch (menuItem.type) {
             case 'collapse':
                 return (

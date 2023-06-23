@@ -21,6 +21,7 @@ import {
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
 import { BellOutlined, CloseOutlined } from '@ant-design/icons';
+import { useStateContext } from 'context/authContext';
 // import {Notifications} from '../../../../pages/AdminDash/Notifications'
 
 const avatarSX = {
@@ -45,6 +46,7 @@ const NotificationComponent = () => {
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const {user} = useStateContext() 
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -65,8 +67,13 @@ const NotificationComponent = () => {
       const notification = new Notification('Title', { body: 'Notification body' });
     }
   
-    navigate('/dashboard/admin/Notifications');
+    if (user.isAdmin) {
+      navigate('/dashboard/admin/Notifications');
+    } else {
+      navigate('/dashboard/user/AdminNotifications');
+    }
   };
+  
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
@@ -117,7 +124,7 @@ const NotificationComponent = () => {
             >
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard
-                  title="Les bons de commande"
+                  title= {user.isAdmin?'Les bons de commande': ' Les notifications' }  
                   elevation={0}
                   border={false}
                   content={false}

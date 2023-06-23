@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import 'styles/userDetails.scss';
 import 'styles/headerDash.scss';
 import 'styles/machineDetails.scss';
-
 import { useNavigate } from 'react-router-dom';
 import Modal from 'components/Modal';
 import { Formik } from 'formik';
@@ -87,6 +86,7 @@ const MachineDetails = () => {
         const data = await axios.post(`${url}VisitDetails/AddVisit`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         console.log(data);
         setVisits((prev) => [...prev, data.data]);
+
     };
 
     const addNotif = async (values) => {
@@ -105,6 +105,8 @@ const MachineDetails = () => {
         const data = await axios.post(`${url}MachineStateNotification/AddMachineNotification`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
+
+
         console.log(data);
         set
     };
@@ -135,7 +137,7 @@ const MachineDetails = () => {
     return (
         <div>
             <div className="dash-header">
-                <span>Machine Détails</span>
+                <span> Détails de machine : </span>
             </div>
             <div className="machine-detail-box">
                 <div>
@@ -222,7 +224,7 @@ const MachineDetails = () => {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="piece">Piece lointe</InputLabel>
+                                                <InputLabel htmlFor="piece">Piece jointe</InputLabel>
                                                 <OutlinedInput
                                                     id="piece"
                                                     type="file"
@@ -282,7 +284,7 @@ const MachineDetails = () => {
                                         <Stack spacing={1}>
                                             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
                                                 <div>
-                                                    <InputLabel htmlFor="message">Visit number</InputLabel>
+                                                    <InputLabel htmlFor="message">numéro visite</InputLabel>
                                                     <OutlinedInput
                                                         id="visitNumber"
                                                         type="text"
@@ -301,7 +303,7 @@ const MachineDetails = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <InputLabel htmlFor="message">Visit Date</InputLabel>
+                                                    <InputLabel htmlFor="message"> Date visite</InputLabel>
                                                     <OutlinedInput
                                                         id="visitDate"
                                                         type="text"
@@ -325,7 +327,7 @@ const MachineDetails = () => {
                                     <Grid item xs={12}>
                                         <Stack>
                                             <InputLabel id="demo-multiple-name-label">type de réparation</InputLabel>
-                                            <Select
+                                            <OutlinedInput
                                                 labelId="demo-multiple-name-label"
                                                 id="demo-multiple-name"
                                                 value={values.RepaireType}
@@ -333,21 +335,21 @@ const MachineDetails = () => {
                                                 onChange={handleChange}
                                                 input={<OutlinedInput label="repaireType" name="repaireType" placeholder="sdqsd" />}
                                             >
-                                                <MenuItem value="finis">finis</MenuItem>
-                                                <MenuItem value="en Progress">en cours</MenuItem>
-                                            </Select>
+                                                
+                                            
                                             {touched.RepaireType && errors.RepaireType && (
                                                 <FormHelperText error id="standard-weight-helper-text-RepaireType-login">
                                                     {errors.RepaireType}
                                                 </FormHelperText>
                                             )}
+                                            </OutlinedInput>
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Stack spacing={1}>
                                             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
                                                 <div>
-                                                    <InputLabel htmlFor="message">PmInvestigationFileNumber</InputLabel>
+                                                    <InputLabel htmlFor="message">MpInvestigationFileNumber</InputLabel>
                                                     <OutlinedInput
                                                         id="pminvestFileNum"
                                                         type="text"
@@ -355,7 +357,7 @@ const MachineDetails = () => {
                                                         name="PmInvestigationFileNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
-                                                        placeholder="Enter visit number"
+                                                        placeholder=""
                                                         fullWidth
                                                         error={Boolean(
                                                             touched.PmInvestigationFileNumber && errors.PmInvestigationFileNumber
@@ -368,7 +370,7 @@ const MachineDetails = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <InputLabel htmlFor="message">pmReturnDate</InputLabel>
+                                                    <InputLabel htmlFor="message">MpDateRetour</InputLabel>
                                                     <OutlinedInput
                                                         id="pmReturnDate"
                                                         type="text"
@@ -376,7 +378,7 @@ const MachineDetails = () => {
                                                         name="PmReturnDate"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
-                                                        placeholder="Enter"
+                                                        placeholder=""
                                                         fullWidth
                                                         error={Boolean(touched.PmReturnDate && errors.PmReturnDate)}
                                                     />
@@ -387,7 +389,7 @@ const MachineDetails = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <InputLabel htmlFor="message">pmInterFileNumber</InputLabel>
+                                                    <InputLabel htmlFor="message">MpInterFileNumber</InputLabel>
                                                     <OutlinedInput
                                                         id="pmInterFileNumber"
                                                         type="text"
@@ -395,7 +397,7 @@ const MachineDetails = () => {
                                                         name="PmInterventionFileNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
-                                                        placeholder="Enter message"
+                                                        placeholder=""
                                                         fullWidth
                                                         error={Boolean(touched.PmInterventionFileNumber && errors.PmInterventionFileNumber)}
                                                     />
@@ -412,7 +414,7 @@ const MachineDetails = () => {
                                         <Stack spacing={1}>
                                             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
                                                 <div>
-                                                    <InputLabel htmlFor="message">cmEnterDate</InputLabel>
+                                                    <InputLabel htmlFor="message">McEnterDate</InputLabel>
                                                     <OutlinedInput
                                                         id="cmEnterDate"
                                                         type="text"
@@ -420,7 +422,7 @@ const MachineDetails = () => {
                                                         name="CmEnterDate"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
-                                                        placeholder="Enter visit number"
+                                                        placeholder=""
                                                         fullWidth
                                                         error={Boolean(touched.CmEnterDate && errors.CmEnterDate)}
                                                     />
@@ -431,7 +433,7 @@ const MachineDetails = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <InputLabel htmlFor="message">cmReturnDate</InputLabel>
+                                                    <InputLabel htmlFor="message">McReturnDate</InputLabel>
                                                     <OutlinedInput
                                                         id="cmReturnDate"
                                                         type="text"
@@ -456,7 +458,7 @@ const MachineDetails = () => {
                                         <Stack>
                                             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
                                                 <div>
-                                                    <InputLabel htmlFor="message">CmInterventionFileNumber</InputLabel>
+                                                    <InputLabel htmlFor="message">McInterventionFileNumber</InputLabel>
                                                     <OutlinedInput
                                                         id="cmInvestFileNumber"
                                                         type="text"
@@ -464,7 +466,7 @@ const MachineDetails = () => {
                                                         name="CmInterventionFileNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
-                                                        placeholder="Enter visit number"
+                                                        placeholder=""
                                                         fullWidth
                                                         error={Boolean(touched.CmInterventionFileNumber && errors.CmInterventionFileNumber)}
                                                     />
@@ -475,7 +477,7 @@ const MachineDetails = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <InputLabel htmlFor="message">CmInvestigationFileNumber</InputLabel>
+                                                    <InputLabel htmlFor="message">McInvestigationFileNumber</InputLabel>
                                                     <OutlinedInput
                                                         id="CmInvestigationFileNumber"
                                                         type="text"
@@ -483,7 +485,7 @@ const MachineDetails = () => {
                                                         name="CmInvestigationFileNumber"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
-                                                        placeholder="Enter"
+                                                        placeholder=""
                                                         fullWidth
                                                         error={Boolean(
                                                             touched.CmInvestigationFileNumber && errors.CmInvestigationFileNumber
@@ -496,7 +498,7 @@ const MachineDetails = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <InputLabel htmlFor="message">cmRepaireType</InputLabel>
+                                                    <InputLabel htmlFor="message">McTypeRéparation</InputLabel>
                                                     <OutlinedInput
                                                         id="cmRepairType"
                                                         type="text"
@@ -504,7 +506,7 @@ const MachineDetails = () => {
                                                         name="CmRepaireType"
                                                         onBlur={handleBlur}
                                                         onChange={handleChange}
-                                                        placeholder="Enter message"
+                                                        placeholder=""
                                                         fullWidth
                                                         error={Boolean(touched.CmRepaireType && errors.CmRepaireType)}
                                                     />
@@ -527,7 +529,7 @@ const MachineDetails = () => {
                                                 name="FinalState"
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
-                                                placeholder="FinalState jointe"
+                                                placeholder=""
                                                 fullWidth
                                                 error={Boolean(touched.FinalState && errors.FinalState)}
                                             />
@@ -550,7 +552,7 @@ const MachineDetails = () => {
                                                 maxRows={4}
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
-                                                placeholder="Enter Comment"
+                                                placeholder=""
                                                 fullWidth
                                                 error={Boolean(touched.Comment && errors.Comment)}
                                             />
@@ -572,7 +574,7 @@ const MachineDetails = () => {
                                             name="Attachment"
                                             onBlur={handleBlur}
                                             onChange={(e) => setFile(e.target.files[0])} // Update this line
-                                            placeholder="Attachment jointe"
+                                            placeholder="file"
                                             fullWidth
                                             error={Boolean(touched.Attachment && errors.Attachment)}
                                             />
@@ -619,7 +621,7 @@ const MachineDetails = () => {
                 <OutlinedInput
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                placeholder="Enter visit date"
+                placeholder=""
                 endAdornment={
                     <InputAdornment position="end">
                     <IconButton onClick={() => setDateFilter('')} edge="end">
@@ -639,7 +641,7 @@ const MachineDetails = () => {
             </div>
             <div className="users-grid-body">
                 {filteredVisits.length > 0 ? (
-                filteredVisits.map((item, idx) => (
+                filteredVisits.reverse().map((item, idx) => (
                     <div
                     key={idx}
                     onClick={() =>

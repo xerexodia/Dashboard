@@ -5,7 +5,6 @@ import { ToastContainer } from 'react-toastify';
 import { MessageOutlined, DownloadOutlined } from '@ant-design/icons';
 import 'styles/Notifications.scss';
 
-
 const Notifications = () => {
   const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [clientIdFilter, setClientIdFilter] = useState('');
@@ -113,36 +112,33 @@ const Notifications = () => {
       </div>
 
       <div className="message-container">
-        {filteredPurchaseOrders.map((order) => (
+        {filteredPurchaseOrders.reverse().map((order) => (
           <div className="msg-box" key={order.id}>
             <div className="msg">
               <span>User ID: {order.userId}</span>
-              <span>Creation Date: {order.creationDate.slice(0, 10)}</span>
+              <span>Date de créaction : {order.creationDate.slice(0, 10)}</span>
               <span className="message">
-              <span className="message-label">Message :</span>
-              {!order.showMessage ? (
-                <>
-                  <span className="message-value">{order.message.split(' ').slice(0, 5).join(' ')}</span>{' '}
-                  {order.message.split(' ').length > 5 && (
-                    <button className="more-button" onClick={() => toggleMessage(order.id)}>
-                      More
-                    </button>
-                  )}
-                </>
-              ) : (
-                <>
-                  <span className="message-value">{order.message}</span>{' '}
-                  {order.message.split(' ').length > 5 && (
-                    <button className="less-button" onClick={() => toggleMessage(order.id)}>
-                      Less
-                    </button>
-                  )}
-                </>
-              )}
-            </span>
-
-              
-
+                <span className="message-label">Message :</span>
+                {!order.showMessage ? (
+                  <>
+                    <span className="message-value">{order.message?.split(' ').slice(0, 5).join(' ')}</span>{' '}
+                    {order.message?.split(' ').length > 5 && (
+                      <button className="more-button" onClick={() => toggleMessage(order.id)}>
+                        More
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <span className="message-value">{order.message}</span>{' '}
+                    {order.message?.split(' ').length > 5 && (
+                      <button className="less-button" onClick={() => toggleMessage(order.id)}>
+                        Less
+                      </button>
+                    )}
+                  </>
+                )}
+              </span>
 
               {order.attachmentName && (
                 <button

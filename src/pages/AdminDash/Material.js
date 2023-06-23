@@ -71,10 +71,10 @@ const Material = () => {
       <div className="grid-data">
         <div>
         <span>clientId</span>
-          <span>serial number</span>
+          <span>Numéro de serie</span>
           <span>machine type</span>
           
-          <span>sale date</span>
+          <span>date de vente</span>
           <span>Action</span>
         </div>
         <div className="grid-body">
